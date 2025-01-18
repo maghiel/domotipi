@@ -4,9 +4,8 @@ from time import sleep
 
 from DomotiPi.Device.Light import Light
 
-from DomotiPi.Device.Action.RGBLEDStrip import RGBLEDStrip
-
 from DomotiPi.Device.Action.LEDStrip import LEDStrip
+from DomotiPi.mqtt.Client import Client
 
 # Press Shift+F10 to execute it or replace it with your code.
 # Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
@@ -14,13 +13,20 @@ from DomotiPi.Device.Action.LEDStrip import LEDStrip
 os.environ["GPIOZERO_PIN_FACTORY"] = 'pigpio'
 os.environ["PIGPIO_ADDR"] = '***REMOVED***'
 
+# MQTT test
+mqtt = Client()
+mqtt.listen()
+
+''''
+Basic led strip on and off test
+
 strip = LEDStrip()
 strip.on()
 
 sleep(10)
 
 strip.off()
-
+'''
 
 '''light1 = Light()
 print(light1.getName())
