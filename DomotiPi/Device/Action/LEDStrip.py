@@ -5,6 +5,13 @@ from DomotiPi.Device.Light import Light
 
 
 class LEDStrip(Light):
+    """
+    Class LEDStrip. Extends Light.
+
+    This class will talk to a dumb LED strip with separate r, g and b LEDs and creates different LED
+    instances for each LED.
+    Cheap strips like these are not suitable for usage with RGBLED, as colors can't be mixed.
+    """
     __pinRed: int
     __pinGreen: int
     __pinBlue: int
@@ -14,6 +21,11 @@ class LEDStrip(Light):
     __LEDBlue: LED
 
     def __init__(self):
+        """
+        Constructor
+
+        Sets parent, properties and instantiates LED objects for each pin
+        """
         # Init parent
         Light.__init__(self)
         self.__id = 3
@@ -45,15 +57,25 @@ class LEDStrip(Light):
 
         pass
 
-
     def on(self):
+        """
+        Switches all three LEDs on
+
+        :rtype: LEDStrip
+        """
         # For now just turn everything on
         self.__LEDRed.on()
         self.__LEDGreen.on()
         self.__LEDBlue.on()
         pass
 
+
     def off(self):
+        """
+        Switches all three LEDs off
+
+        :rtype: LEDStripD
+        """
         self.__LEDRed.off()
         self.__LEDGreen.off()
         self.__LEDBlue.off()
