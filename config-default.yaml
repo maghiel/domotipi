@@ -1,0 +1,3 @@
+# GPIO settings
+pin_factory: pigpio
+pigpio_addr: 127.0.0.1

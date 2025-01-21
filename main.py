@@ -4,14 +4,21 @@ from time import sleep
 
 from DomotiPi.Device.Light import Light
 
-from DomotiPi.Device.Action.RGBLEDStrip import RGBLEDStrip
+#from DomotiPi.Device.Action.RGBLEDStrip import RGBLEDStrip
 
 from DomotiPi.Device.Action.LEDStrip import LEDStrip
+
+from DomotiPi.Config import Config
 
 # Press Shift+F10 to execute it or replace it with your code.
 # Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
 
-os.environ["GPIOZERO_PIN_FACTORY"] = 'pigpio'
+cfg = Config()
+print(cfg)
+print(cfg.getConfigStream())
+
+
+'''os.environ["GPIOZERO_PIN_FACTORY"] = 'pigpio'
 os.environ["PIGPIO_ADDR"] = '***REMOVED***'
 
 strip = LEDStrip()
@@ -19,7 +26,7 @@ strip.on()
 
 sleep(10)
 
-strip.off()
+strip.off()'''
 
 
 '''light1 = Light()
