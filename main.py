@@ -7,6 +7,7 @@ from DomotiPi.Device.Light import Light
 #from DomotiPi.Device.Action.RGBLEDStrip import RGBLEDStrip
 
 from DomotiPi.Device.Action.LEDStrip import LEDStrip
+from DomotiPi.mqtt.Client import Client
 
 from DomotiPi.Config import Config
 
@@ -20,15 +21,22 @@ print(cfg.getValue('pin_factory'))
 
 
 '''os.environ["GPIOZERO_PIN_FACTORY"] = 'pigpio'
-os.environ["PIGPIO_ADDR"] = '***REMOVED***'
+os.environ["PIGPIO_ADDR"] = '***REMOVED***'''
+
+# MQTT test
+mqtt = Client()
+mqtt.listen()
+
+'''
+Basic led strip on and off test
 
 strip = LEDStrip()
 strip.on()
 
 sleep(10)
 
-strip.off()'''
-
+strip.off()
+'''
 
 '''light1 = Light()
 print(light1.getName())
