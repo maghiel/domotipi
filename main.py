@@ -1,4 +1,4 @@
-# This is a sample Python script.
+# DomotiPi development testscript
 import os
 from time import sleep
 
@@ -14,21 +14,25 @@ from DomotiPi.Config import Config
 # Press Shift+F10 to execute it or replace it with your code.
 # Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
 
+# DomotiPi.Config tests
 cfg = Config()
 print(cfg)
 print(cfg.getValue('pin_factory'))
 #print(cfg.getConfigStream())
 
+# Environment setup
+os.environ["GPIOZERO_PIN_FACTORY"] = cfg.getValue('pin_factory')
+os.environ["PIGPIO_ADDR"] = cfg.getValue('pigpio_addr')
 
-'''os.environ["GPIOZERO_PIN_FACTORY"] = 'pigpio'
-os.environ["PIGPIO_ADDR"] = '***REMOVED***'''
-
+'''
 # MQTT test
 mqtt = Client()
 mqtt.listen()
+'''
 
 '''
-Basic led strip on and off test
+# DomotiPi.Device.Action.LEDStrip test
+# Basic led strip on and off test
 
 strip = LEDStrip()
 strip.on()
@@ -38,7 +42,10 @@ sleep(10)
 strip.off()
 '''
 
-'''light1 = Light()
+'''
+# DomotiPi.Device.Light test
+
+light1 = Light()
 print(light1.getName())
 print(light1.getId())
 print(type(Light))
@@ -47,16 +54,3 @@ print(type(Light))
 strip = RGBLEDStrip()
 strip.getId()
 '''
-
-
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
-
-
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
-
