@@ -15,7 +15,8 @@ from DomotiPi.Config import Config
 
 cfg = Config()
 print(cfg)
-print(cfg.getConfigStream())
+print(cfg.getValue('pin_factory'))
+#print(cfg.getConfigStream())
 
 
 '''os.environ["GPIOZERO_PIN_FACTORY"] = 'pigpio'
