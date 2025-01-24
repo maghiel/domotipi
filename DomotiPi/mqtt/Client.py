@@ -37,10 +37,11 @@ class Client:
 
         pass
 
-    def publish(self):
+    def publish(self, payload: str):
         """
         Publish simple payload to the MQTT broker
 
+        :type payload: str
         :rtype: null
         """
 
@@ -48,7 +49,7 @@ class Client:
         while True:
             self.mPublish.single(
                 "homeassistant/domotipi/99/switch",
-                payload= "1",
+                payload= payload,
                 hostname= self.config['hostname'],
                 port= self.config['port'],
                 client_id= self.config['client_id'],
