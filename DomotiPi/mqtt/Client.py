@@ -33,6 +33,26 @@ class Client:
 
         pass
 
+    def listen(self):
+        def onMessage(self, userdata, message):
+            print(f"Incoming message!: {message.payload}")
+
+        client = self.mClient.Client()
+        client.username_pw_set(
+            self.config['client']['username'],
+            self.config['client']['password']
+        )
+        client.connect(
+            self.config['host']['hostname'],
+            self.config['host']['port']
+        )
+
+        client.on_message = onMessage
+        client.subscribe('homeassistant/domotipi/99/switch')
+
+        client.loop_forever()
+
+
     def publish(self, payload: str):
         """
         Publish simple payload to the MQTT broker
