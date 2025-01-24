@@ -1,3 +1,7 @@
+# This is the default configuration.
+# Best practice is to copy this file to config.yaml before editing
+# DomotiPi will automatically load config.yaml in favor of config-default.yaml
+
 #######################################################################################################################
 # GPIO settings
 #######################################################################################################################
@@ -7,10 +11,10 @@ pigpio_addr: 127.0.0.1
 #######################################################################################################################
 # MQTT settings
 #######################################################################################################################
-
 # Enter the details of your MQTT broker below,
 #
 # HINT: for HASS users: new users are preferably created through HASS user management
+#
 
 # MQTT host settings
 mqtt:
