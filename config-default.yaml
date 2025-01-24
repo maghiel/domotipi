@@ -1,3 +1,25 @@
+#######################################################################################################################
 # GPIO settings
+#######################################################################################################################
 pin_factory: pigpio
 pigpio_addr: 127.0.0.1
+
+#######################################################################################################################
+# MQTT settings
+#######################################################################################################################
+
+# Enter the details of your MQTT broker below,
+#
+# HINT: for HASS users: new users are preferably created through HASS user management
+
+# MQTT host settings
+mqtt:
+  host:
+    hostname: 192.168.1.1
+    port: 1883
+
+# Client settings
+  client:
+    client_id: homeassistant_client
+    username: homeassistant
+    password: password

@@ -22,6 +22,14 @@ class Config:
 
         pass
 
+    def getConfig(self) -> dict:
+        """
+        Get complete config dictionary
+
+        :return:
+        """
+        return self.cfg
+
     def getConfigStream(self) -> dict:
         """
         Attempt to open stream to YAML and return dictionary.
@@ -44,11 +52,12 @@ class Config:
 
         return configStream
 
+
     def getValue(self, index: str) -> any:
         """
         Get value for given index
 
-        :param index:
+        :param index: str
 
         :return:
         :rtype: any
