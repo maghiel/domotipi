@@ -1,5 +1,6 @@
 # DomotiPi user-defined settings
 config.yaml
+broker.yaml
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
