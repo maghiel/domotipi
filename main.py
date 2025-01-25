@@ -31,7 +31,10 @@ os.environ["PIGPIO_ADDR"] = cfg.getValue('pigpio_addr')
 
 # MQTT test
 mqtt = Client()
-mqtt.publish('woef woef woef')
+#mqtt.publish('woef woef woef')
+#mqtt.listen()
+mqtt.discovery()
+
 
 
 '''
