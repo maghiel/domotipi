@@ -50,32 +50,30 @@ class LEDStrip(Light):
         self.__LEDGreen = LED(self.__pinGreen, active_high=False)
         self.__LEDBlue = LED(self.__pinBlue, active_high=False)
 
-        """
-        PiGPIO settings
-        """
-        os.environ["PIGPIO_ADDR"] = '***REMOVED***'
-
         pass
 
     def on(self):
         """
         Switches all three LEDs on
 
-        :rtype: LEDStrip
+        :rtype: bool
         """
         # For now just turn everything on
         self.__LEDRed.on()
         self.__LEDGreen.on()
         self.__LEDBlue.on()
-        pass
+
+        return True
 
 
     def off(self):
         """
         Switches all three LEDs off
 
-        :rtype: LEDStripD
+        :rtype: bool
         """
         self.__LEDRed.off()
         self.__LEDGreen.off()
         self.__LEDBlue.off()
+
+        return True
