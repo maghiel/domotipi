@@ -4,3 +4,7 @@
 
 * MQTT
   * listen
+ 
+* Config
+  * Refactor to a "uncomment default to edit" approach
+
