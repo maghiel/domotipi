@@ -4,6 +4,8 @@ from DomotiPi.DeviceAbstract import DeviceAbstract
 class Light(DeviceAbstract):
     """
     Class Light, Extends abstract :class:`DeviceAbstract`
+
+    TODO: refactor private properties to protected properties
     """
 
     __id: int

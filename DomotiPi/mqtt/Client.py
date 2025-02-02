@@ -1,5 +1,6 @@
 import time
 
+import paho.mqtt.client
 import paho.mqtt.client as mqttClient
 import paho.mqtt.publish as mqttPublish
 
@@ -15,12 +16,17 @@ class Client:
     Simple MQTT client
 
     Instead of extending mqtt classes new instances are made.
+
+    TODO: lot of rename refactoring; client is used way too much
+    TODO: remove testing methods
     """
 
     config: dict
 
     mClient: mqttClient
     mPublish: mqttPublish
+
+    client: paho.mqtt.client.Client
 
     def __init__(self):
         """
@@ -29,9 +35,14 @@ class Client:
         self.mClient = mqttClient
         self.mPublish = mqttPublish
 
+        # Configuration
         cfg = Config()
         self.config = cfg.getValue('mqtt')
+
         # TODO: try throw catch
+
+        # Instantiate and connect client
+        self.client = self.connect()
 
         pass
 
@@ -54,6 +65,13 @@ class Client:
 
         return client
 
+    def configure(self, topic: str, payload: dict):
+        print(topic)
+        print(payload)
+        self.client.publish(topic, json.dumps(payload))
+
+        return True
+
 
     def discovery(self):
         topic = 'homeassistant/light/dopi-light-test01/config'
@@ -66,21 +84,22 @@ class Client:
                 'schema': 'json',
                 'brightness': False
             }
-        client = self.connect()
+        client = self.client
 
         client.publish(topic, json.dumps(payload))
         time.sleep(1)
         client.loop_forever()
 
 
-    def listen(self):
+    def listen(self, topic):
         def onMessage(self, userdata, message):
             print(f"Incoming message!: {message.payload}")
 
-        client = self.connect()
+        client = self.client
 
         client.on_message = onMessage
-        client.subscribe('homeassistant/domotipi/99/switch')
+        client.subscribe(topic)
+        print(f'subscribed to {topic}')
 
         client.loop_forever()
 

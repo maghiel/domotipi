@@ -1,16 +1,12 @@
 # DomotiPi development testscript
-import os
-from time import sleep
 
-from DomotiPi.Device.Light import Light
+import DomotiPi.Device.Action.LEDStrip
 
 #from DomotiPi.Device.Action.RGBLEDStrip import RGBLEDStrip
 
-from DomotiPi.Device.Action.LEDStrip import LEDStrip
-from DomotiPi.mqtt.Client import Client
-
-from DomotiPi.Config import Config
-
+#from DomotiPi.Device.Action.LEDStrip import LEDStrip
+#from DomotiPi.Device.Action.LEDStrip.Service import Mqtt
+from DomotiPi.Device.Action.LEDStrip.Service.Mqtt import Mqtt
 # Press Shift+F10 to execute it or replace it with your code.
 # Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
 
@@ -29,13 +25,16 @@ os.environ["PIGPIO_ADDR"] = cfg.getValue('pigpio_addr')
 '''
 
 
+'''
 # MQTT test
 mqtt = Client()
 #mqtt.publish('woef woef woef')
 #mqtt.listen()
 mqtt.discovery()
+'''
 
-
+# LEDStrip / MQTT test
+stripCtl = Mqtt()
 
 '''
 # DomotiPi.Device.Action.LEDStrip test
