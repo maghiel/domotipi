@@ -31,7 +31,7 @@ class Mqtt(LEDStrip):
 
         print(f"configured {self.objectId} ")
         print(self.topic)
-        self.client.listen(self.topic['command'])
+        self.client.listen(self.topic['command'], 'command', self)
         #self.client.listen(self.topic['state'])
 
         pass
@@ -49,3 +49,29 @@ class Mqtt(LEDStrip):
         }
 
         self.client.configure(configTopic, payload)
+
+
+    def command(self, state: dict):
+        """
+        Set given state.
+        This method is typically called by the mqtt client from a payload
+
+        :param state: string    State to change to
+        :return:
+        """
+        if "state" in state.keys():
+            match state.get('state'):
+                case "ON":
+                    super().on()
+                case "OFF":
+                    super().off()
+                case _:
+                    # TODO: throw exception about empty command/state OR implement toggle instead
+                    super().off()
+
+        return True
+
+
+    def getState(self):
+        return super().isLit()
+

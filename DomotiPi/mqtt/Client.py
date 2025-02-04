@@ -66,6 +66,13 @@ class Client:
         return client
 
     def configure(self, topic: str, payload: dict):
+        """
+        Configure mqtt discovery at given topic with given payload
+
+        :param topic:
+        :param payload:
+        :return:
+        """
         print(topic)
         print(payload)
         self.client.publish(topic, json.dumps(payload))
@@ -91,9 +98,19 @@ class Client:
         client.loop_forever()
 
 
-    def listen(self, topic):
+    def listen(self, topic: str, ctlType: str, ctlObject):
         def onMessage(self, userdata, message):
-            print(f"Incoming message!: {message.payload}")
+            # Decode mqtt payload to str and convert to dict
+            msgdec = json.loads(message.payload.decode('utf-8'))
+
+            match ctlType:
+                case 'command':
+                    ctlObject.command(msgdec)
+                case 'state':
+                    ctlObject.state(msgdec)
+                case _:
+                    # TODO: throw exception invallid command type
+                    print('error')
 
         client = self.client
 
