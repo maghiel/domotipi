@@ -1,3 +1,5 @@
+from os import MFD_ALLOW_SEALING
+
 from DomotiPi.Device.Action.LEDStrip.LEDStrip import LEDStrip
 from DomotiPi.mqtt.Client import Client
 
@@ -27,13 +29,12 @@ class Mqtt(LEDStrip):
         }
 
         self.configure(self.topic['home'], self.topic['discover'])
-        print(self.getName())
 
-        print(f"configured {self.objectId} ")
-        print(self.topic)
-        self.client.listen(self.topic['command'], 'command', self)
-        #self.client.listen(self.topic['state'])
+        # Subscribe to command topic
+        self.client.listen(self.topic['state'], 'state', self, False)
+        self.client.listen(self.topic['command'], 'command', self, False)
 
+        self.client.loop()
         pass
 
 
@@ -56,21 +57,31 @@ class Mqtt(LEDStrip):
         Set given state.
         This method is typically called by the mqtt client from a payload
 
-        :param state: string    State to change to
-        :return:
+        :param state: dict    State to change to
+        :return:boolean
         """
         if "state" in state.keys():
             match state.get('state'):
                 case "ON":
                     super().on()
+                    self.client.publishSingle(
+                        self.topic['state'],
+                        {'state': 'ON'}
+                    )
                 case "OFF":
                     super().off()
+                    # self.client.publishSingle(
+                    #     self.topic['state'],
+                    #  {'state': 'OFF'}
+                    # )
                 case _:
                     # TODO: throw exception about empty command/state OR implement toggle instead
                     super().off()
 
         return True
 
+    def state(self, payload):
+        return True
 
     def getState(self):
         return super().isLit()

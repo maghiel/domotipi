@@ -98,7 +98,7 @@ class Client:
         client.loop_forever()
 
 
-    def listen(self, topic: str, ctlType: str, ctlObject):
+    def listen(self, topic: str, ctlType: str, ctlObject, loop: bool):
         def onMessage(self, userdata, message):
             # Decode mqtt payload to str and convert to dict
             msgdec = json.loads(message.payload.decode('utf-8'))
@@ -118,8 +118,26 @@ class Client:
         client.subscribe(topic)
         print(f'subscribed to {topic}')
 
-        client.loop_forever()
+        if True == loop:
+            client.loop_forever()
 
+    def publishSingle(self, topic: str, message):
+        self.client.publish(
+            topic,
+            payload= json.dumps(message)
+        )
+        # self.mPublish.single(
+        #     topic,
+        #     payload= json.dumps(message),
+        #     hostname= self.config['host']['hostname'],
+        #     port= self.config['host']['port'],
+        #     client_id= self.config['client']['client_id'],
+        #     auth= {
+        #         'username': self.config['client']['username'],
+        #         'password': self.config['client']['password']
+        #     },
+        #     protocol= self.mClient.MQTTv311
+        #)
 
     def publish(self, payload: str):
         """
@@ -145,3 +163,6 @@ class Client:
             )
 
             time.sleep(4)
+
+    def loop(self):
+        self.client.loop_forever()
