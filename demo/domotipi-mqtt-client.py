@@ -10,4 +10,4 @@ from DomotiPi.mqtt.Client import Client
 mqtt = Client()
 #mqtt.publish('woef woef woef')
 #mqtt.listen()
-mqtt.discovery()
+#mqtt.discovery()
