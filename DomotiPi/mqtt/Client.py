@@ -30,7 +30,9 @@ class Client:
 
     def __init__(self):
         """
-        Constructor. Instantiate MQTT client and publish objects and load configuration
+        Constructor.
+
+        Instantiate MQTT client and publish objects and load configuration
         """
         self.mClient = mqttClient
         self.mPublish = mqttPublish
@@ -65,40 +67,40 @@ class Client:
 
         return client
 
+
     def configure(self, topic: str, payload: dict):
         """
         Configure mqtt discovery at given topic with given payload
 
-        :param topic:
-        :param payload:
-        :return:
+        :param topic:       Topic for discovery/configuration
+        :type topic:        str
+        :param payload:     Configuration payload
+        :type payload:      dict
+        :return:            bool
         """
-        print(topic)
-        print(payload)
         self.client.publish(topic, json.dumps(payload))
 
         return True
 
 
-    def discovery(self):
-        topic = 'homeassistant/light/dopi-light-test01/config'
-        payload = {
-                '~': 'homeassistant/light/dopi-light_test01',
-                'name': 'DomotiPi Light Test 01',
-                'uniq_id': 'dopi-light_test01',
-                'cmd_t': '~/set',
-                'stat_t': '~/state',
-                'schema': 'json',
-                'brightness': False
-            }
-        client = self.client
-
-        client.publish(topic, json.dumps(payload))
-        time.sleep(1)
-        client.loop_forever()
-
-
     def listen(self, topic: str, ctlType: str, ctlObject, loop: bool):
+        """
+        Listen/subscribe to given topic.
+
+        Subscribe to given topic and optionally call object methods on on_message event.
+
+        TODO: refactor to subscribe
+
+        :param topic:       Topic to listen/subscribe too
+        :type topic:        str
+        :param ctlType:     Control type; either "command" or "state"
+        :type ctlType:      str
+        :param ctlObject:   Object instance to call method on
+        :type ctlObject:    TBD
+        :param loop:        Call loop_forever on the MQTT client
+        :type loop:         bool
+        :return:
+        """
         def onMessage(self, userdata, message):
             # Decode mqtt payload to str and convert to dict
             msgdec = json.loads(message.payload.decode('utf-8'))
@@ -106,26 +108,61 @@ class Client:
             match ctlType:
                 case 'command':
                     ctlObject.command(msgdec)
+                    return
                 case 'state':
                     ctlObject.state(msgdec)
                 case _:
-                    # TODO: throw exception invallid command type
+                    # TODO: throw exception invalid command type
                     print('error')
 
         client = self.client
 
         client.on_message = onMessage
         client.subscribe(topic)
-        print(f'subscribed to {topic}')
 
         if True == loop:
             client.loop_forever()
 
-    def publishSingle(self, topic: str, message):
-        self.client.publish(
+        pass
+
+
+    def publishSingle(self, topic: str, message: dict):
+        """
+        Publish a single message to the MQTT broker.
+
+        Typically used to publish state updates.
+
+        TODO:   Investigate whether or not it's necessary to instantiate a new connection to the broker
+                or the existing connection will suffice.
+        TODO:   Remove reference old code
+
+        :param topic:       Topic to publish message to
+        :type topic:        str
+        :param message:     Message to publish
+        :type message:      dict
+        :return:
+        """
+        publisher = self.connect()
+        publisher.loop_start()
+
+        publisher.publish(
             topic,
             payload= json.dumps(message)
         )
+
+        publisher.loop_stop()
+
+        # Keeping the old stuff below for reference
+
+        # self.client.loop_start()
+        #
+        # self.client.publish(
+        #     topic,
+        #     payload= json.dumps(message)
+        # )
+        #
+        # self.client.loop_stop()
+
         # self.mPublish.single(
         #     topic,
         #     payload= json.dumps(message),
@@ -139,30 +176,11 @@ class Client:
         #     protocol= self.mClient.MQTTv311
         #)
 
-    def publish(self, payload: str):
-        """
-        Publish simple payload to the MQTT broker
-
-        :type payload: str
-        :rtype: null
-        """
-
-        # Publish a simple payload every 4 seconds
-        while True:
-            self.mPublish.single(
-                "homeassistant/domotipi/99/switch",
-                payload= payload,
-                hostname= self.config['host']['hostname'],
-                port= self.config['host']['port'],
-                client_id= self.config['client']['client_id'],
-                auth= {
-                    'username': self.config['client']['username'],
-                    'password': self.config['client']['password']
-                },
-                protocol= self.mClient.MQTTv311
-            )
-
-            time.sleep(4)
 
     def loop(self):
+        """
+        Simply call loop_forever on the mqtt broker.
+
+        :return:
+        """
         self.client.loop_forever()
