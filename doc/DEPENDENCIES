@@ -1,6 +1,6 @@
 DomotiPi was developed on:
 
-bPython 3.12
+Python 3.12
 
 Has the following dependencies (other version might work, but are untested)
     Configuration
