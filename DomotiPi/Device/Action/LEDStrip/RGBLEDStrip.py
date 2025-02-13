@@ -3,7 +3,7 @@ from gpiozero import RGBLED
 from DomotiPi.Device.Light import Light
 
 
-class LEDStrip(Light):
+class RGBLEDStrip(Light):
     """
     Class LEDStrip. Extends Light.
 
@@ -28,9 +28,9 @@ class LEDStrip(Light):
         """
         # Init parent
         Light.__init__(self)
-        self.__id = 3
-        self.__name = "Action LED strip"
-        self.__description = "Action LED strip with separate R, G and B"
+        self.__id = 4
+        self.__name = "Action RGB LED strip"
+        self.__description = "Action LED strip with RGB leds"
 
         """
         Declare pin-numbers for red, green and blue

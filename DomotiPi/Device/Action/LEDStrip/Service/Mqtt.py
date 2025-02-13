@@ -1,16 +1,14 @@
-from DomotiPi.Device.Action.LEDStrip.LEDStrip import LEDStrip
+from DomotiPi.Device.Action.LEDStrip.RGBLEDStrip import RGBLEDStrip
 from DomotiPi.mqtt.Client import Client
 
 
-class Mqtt(LEDStrip):
+class Mqtt(RGBLEDStrip):
     """
     Class DomotiPi.Device.Action.LEDStrip.Service.Mqtt
 
     Mqtt service layer for LEDStrip.
 
     TODO: Layer should be an injectable factory
-    TODO: Implement brightness
-    TODO: Implement colors
     TODO: publish initial device state
 
     client      DomotiPi.mqtt.Client    MQTT client
