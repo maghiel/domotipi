@@ -1,5 +1,3 @@
-import time
-
 import paho.mqtt.client
 import paho.mqtt.client as mqttClient
 import paho.mqtt.publish as mqttPublish
@@ -105,15 +103,23 @@ class Client:
             # Decode mqtt payload to str and convert to dict
             msgdec = json.loads(message.payload.decode('utf-8'))
 
+            print(f"STATE PAYLOAD: {msgdec}")
             match ctlType:
+                # Forward payload to ctlObject.command()
                 case 'command':
                     ctlObject.command(msgdec)
-                    return
+                    # print('after command')
+                    # print(msgdec.keys())
+                    # if "color" in msgdec.keys():
+                    #     print('FOUND COLOR')
+                    #     ctlObject.color(msgdec.get('color'))
+                # Forward state to ctlObject. Will probably be removed
                 case 'state':
                     ctlObject.state(msgdec)
                 case _:
                     # TODO: throw exception invalid command type
                     print('error')
+                    return False
 
         client = self.client
 

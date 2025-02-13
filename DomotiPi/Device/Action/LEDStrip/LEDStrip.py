@@ -1,5 +1,4 @@
-import os
-from gpiozero import LED
+from gpiozero import RGBLED
 
 from DomotiPi.Device.Light import Light
 
@@ -19,9 +18,7 @@ class LEDStrip(Light):
     __pinGreen: int
     __pinBlue: int
 
-    __LEDRed: LED
-    __LEDGreen: LED
-    __LEDBlue: LED
+    __RGBLED: RGBLED
 
     def __init__(self):
         """
@@ -50,9 +47,13 @@ class LEDStrip(Light):
         I'm not completely sure, but setting LOW on GPIO pins makes them ground?
         It works for now, would it blow up? This also means that active_high should be set to False.
         """
-        self.__LEDRed = LED(self.__pinRed, active_high=False)
-        self.__LEDGreen = LED(self.__pinGreen, active_high=False)
-        self.__LEDBlue = LED(self.__pinBlue, active_high=False)
+        self.__RGBLED = RGBLED(
+            self.__pinRed,
+            self.__pinGreen,
+            self.__pinBlue,
+            active_high=False,
+            pwm=True
+        )
 
         pass
 
@@ -63,9 +64,7 @@ class LEDStrip(Light):
         :rtype: bool
         """
         # For now just turn everything on
-        self.__LEDRed.on()
-        self.__LEDGreen.on()
-        self.__LEDBlue.on()
+        self.__RGBLED.on()
 
         return True
 
@@ -76,9 +75,7 @@ class LEDStrip(Light):
 
         :rtype: bool
         """
-        self.__LEDRed.off()
-        self.__LEDGreen.off()
-        self.__LEDBlue.off()
+        self.__RGBLED.off()
 
         return True
 
@@ -98,5 +95,54 @@ class LEDStrip(Light):
 
         :return:
         """
-        return self.__LEDRed.is_active
+        return self.__RGBLED.is_active
 
+
+    def setColor(self, red: int or float, green: int or float, blue: int or float) -> bool:
+
+        def convertColor(rgb: int or float):
+            """
+            convertColor
+            Takes either int or float and converts the color to 0-1 format
+
+            :param rgb:     Color value in either RGB 0-1 or 255
+            :type rgb:      int or float
+            :return:
+            :rtype:         float
+            """
+            # If rgb is float assume rgb 0-1
+            if type(rgb) == float:
+                return rgb
+
+            # Must already be rgb 0-1 if value is between 0 and 1
+#            if 1 > rgb > 0:
+#                return float(rgb)
+
+            # Do not round the value!
+            return float(rgb / 255)
+
+        self.__RGBLED.red = convertColor(red)
+        self.__RGBLED.green = convertColor(green)
+        self.__RGBLED.blue = convertColor(blue)
+
+        return True
+
+
+    def setBrightness(self, brightness: int or float) -> bool:
+        """
+        Set brightness on red, green and blue
+
+        :param brightness:  Brightness in 0-1 (float) or 0-255 (int) scale
+        :type brightness:   int|float
+        :return:
+        :rtype:             bool
+        """
+        # Convert brightness to 0-1 scale if param is int
+        if type(brightness) == int:
+            brightness = brightness / 255
+
+        self.__RGBLED.red.value = brightness
+        self.__RGBLED.green.value = brightness
+        self.__RGBLED.blue.value = brightness
+
+        return True

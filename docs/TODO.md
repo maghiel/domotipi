@@ -2,8 +2,8 @@
 
 ~~* Introduce verified commits~~
 
-* MQTT
-  * listen
+~~* MQTT~~
+  ~~* listen~~
  
 * Config
   * Refactor to a "uncomment default to edit" approach
@@ -12,3 +12,6 @@
 
 * Dependencies
   * Easy requirements setup
+
+* Implement ConfigMapper for devices
+* 

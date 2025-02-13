@@ -79,7 +79,15 @@ class Mqtt(LEDStrip):
                 'cmd_t': '~/set',
                 'stat_t': '~/state',
                 'schema': 'json',
-                'brightness': False
+                'brightness': False,
+                'color': (
+                    'r',
+                    'g',
+                    'b',
+                ),
+                'supported_color_modes': 'rgb',
+                #'color_mode' : 'rgb',              # Deprecated!
+                #'color_temp': 0,                   # probably not needed
         }
 
         self.client.configure(configTopic, payload)
@@ -87,13 +95,16 @@ class Mqtt(LEDStrip):
 
     def command(self, state: dict):
         """
-        Set given state.
-        This method is typically called by the mqtt client from a payload
+        Set given state/execute command
+        This method is typically called by the mqtt client from a payload.
+        Commands like "color" and "brightness" are automatically extracted from the payload.
 
         :param state:       State to change to
         :type state:        dict
-        :return:boolean
+        :return:
+        :rtype:             bool
         """
+        # state ON|OFF, switch LED on|off and publish single message to broker to report back
         if "state" in state.keys():
             match state.get('state'):
                 case "ON":
@@ -113,12 +124,73 @@ class Mqtt(LEDStrip):
                 case _:
                     # TODO: throw exception about empty command/state OR implement toggle instead
                     super().off()
+                    return False
 
+        # Color state, call parent with given rgb-255
+        if 'color' in state.keys():
+            self.color(state.get('color'))
+
+        # brightness state, call parent with given brightness-255
+        if 'brightness' in state.keys():
+            self.brightness(state.get('brightness'))
         return True
 
 
     def state(self, payload):
         return True
 
-    def getState(self):
+
+    def getState(self) -> bool:
+        """
+        Return current state
+        Return weather or not the device is on or off
+
+        :return:
+        :rtype: bool
+        """
         return super().isLit()
+
+
+    def brightness(self, payload: int):
+        """
+        Set brightness
+
+        :param payload:     Brightness in 255 format
+        :type payload:      int
+        :return:
+        :rtype:             bool
+        """
+        if payload > 255 or payload < 0:
+            return False
+
+        super().setBrightness(payload)
+
+        return True
+
+
+    def color(self, colorPayload: dict) -> bool:
+        """
+        Set color from payload with rgb
+        Call parent setColor with given color values
+
+        :param colorPayload:    Payload with {r,g,b}
+        :type colorPayload:     dict
+        :return:
+        :rtype:                 bool
+        """
+        if (
+            not 'r' in colorPayload.keys()
+            or not 'g' in colorPayload.keys()
+            or not 'b' in colorPayload.keys()
+        ):
+            print('rgb not index')
+            # TODO: throw exception, dict should be (r,g,b)
+            return False
+
+        super().setColor(
+            colorPayload.get('r'),
+            colorPayload.get('g'),
+            colorPayload.get('b')
+        )
+
+        return True
