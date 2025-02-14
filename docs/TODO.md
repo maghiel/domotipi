@@ -1,4 +1,4 @@
-* Remove disclosing configs from git history
+~~* Remove disclosing configs from git history~~
 
 ~~* Introduce verified commits~~
 
