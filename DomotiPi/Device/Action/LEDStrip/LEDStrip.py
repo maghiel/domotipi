@@ -30,9 +30,9 @@ class LEDStrip(Light):
         """
         # Init parent
         Light.__init__(self)
-        self.__id = 3
-        self.__name = "Action LED strip"
-        self.__description = "Action LED strip with separate R, G and B"
+        self._id = 3
+        self._name = "Action LED strip"
+        self._description = "Action LED strip with separate R, G and B"
 
         """
         Declare pin-numbers for red, green and blue
@@ -80,15 +80,6 @@ class LEDStrip(Light):
         self.__LEDBlue.off()
 
         return True
-
-
-    def getName(self) -> str:
-        """
-        Return name of Device
-
-        :rtype: str
-        """
-        return self.__name
 
 
     def isLit(self):

@@ -4,19 +4,20 @@ from DomotiPi.DeviceAbstract import DeviceAbstract
 class Light(DeviceAbstract):
     """
     Class Light, Extends abstract :class:`DeviceAbstract`
-
-    TODO: refactor private properties to protected properties
+    Base class for light emitting devices (see what I did there?)
     """
 
-    __id: int
-    __name: str
+    _id: int
+    _name: str
+    _description: str
 
     def __init__(self):
         """
         Constructor
         """
-        self.__id = 1
-        self.__name = "Light"
+        self._id = 1
+        self._name = "Light"
+        self._description = "Base Light class"
 
     def getId(self) -> int:
         """
@@ -25,12 +26,22 @@ class Light(DeviceAbstract):
         :rtype: int
         :return:
         """
-        return self.__id
+        return self._id
 
     def getName(self) -> str:
         """
         Return name of Device
 
+        :return:
         :rtype: str
         """
-        return self.__name
+        return self._name
+
+    def getDescription(self) -> str:
+        """
+        Return description of Device
+
+        :return:
+        :rtype: str
+        """
+        return self._description

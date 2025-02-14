@@ -10,3 +10,7 @@ class DeviceAbstract(ABC):
     @abstractmethod
     def getName(self) -> str:
         pass
+
+    @abstractmethod
+    def getDescription(self) -> str:
+        pass
