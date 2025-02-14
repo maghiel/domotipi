@@ -10,8 +10,7 @@ class RGBLEDStrip(Light):
     This class will talk to a dumb LED strip with separate r, g and b LEDs and creates different LED
     instances for each LED.
     Cheap strips like these are not suitable for usage with RGBLED, as colors can't be mixed.
-
-    TODO: implement description
+\
     TODO: implement gpiozero.LED methods
     """
     __pinRed: int

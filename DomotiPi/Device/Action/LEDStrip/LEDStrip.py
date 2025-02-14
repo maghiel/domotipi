@@ -11,7 +11,6 @@ class LEDStrip(Light):
     instances for each LED.
     Cheap strips like these are not suitable for usage with RGBLED, as colors can't be mixed.
 
-    TODO: implement description
     TODO: implement gpiozero.LED methods
     """
     __pinRed: int
