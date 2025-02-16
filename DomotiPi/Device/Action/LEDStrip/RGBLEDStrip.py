@@ -37,8 +37,8 @@ class RGBLEDStrip(Light):
         NOTE: gpiozero uses GPIO pin-numbers instead of physical pin-numbers
         """
         self.__pinRed = 17  # Board 11
-        self.__pinGreen = 22  # Board 13
-        self.__pinBlue = 27  # Board 15
+        self.__pinGreen = 27  # Board 13
+        self.__pinBlue = 22  # Board 15
 
         """
         Init LED classes
