@@ -21,3 +21,6 @@
 * MQTT
   * Abstracting the mqtt client layer.
 
+* Devices
+  * Backport color and brightness changes in Hoogvliet back to Action
+  * 
