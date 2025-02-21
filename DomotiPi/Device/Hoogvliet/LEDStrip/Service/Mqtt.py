@@ -94,7 +94,10 @@ class Mqtt(Hoogvliet):
 
         self.client.publishSingle(
             self.topic['state'],
-            {'state': 'OFF'}
+            {
+                'state': 'OFF',
+                'brightness' : 255
+            }
         )
 
 
