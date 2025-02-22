@@ -1,5 +1,3 @@
-from typing import clear_overloads
-
 from gpiozero import RGBLED
 
 from DomotiPi.Device.Light import Light
@@ -64,7 +62,6 @@ class Hoogvliet(Light):
             self.__RGBLED.green,      # Green
             self.__RGBLED.blue,       # Blue
             1               # Brightness
-
         )
 
         pass
@@ -79,17 +76,15 @@ class Hoogvliet(Light):
         :param green:           Green
         :param blue:            Blue
         :param brightness:      Brightness
-        :return:
+        :raises:                ValueError
         """
         args = locals()
-        print(args)
         for arg in args.items():
             if type(arg[1]) == type(self):
                 continue
 
             if arg[1] < 0 or arg[1] > 1:
-                # TODO: throw exception
-                return False
+                raise ValueError('RGB values must be between 0 and 1')
 
         self._colorValue = [
             red,            # Red
