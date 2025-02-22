@@ -9,7 +9,8 @@ class Mqtt(Hoogvliet):
     Mqtt service layer for LEDStrip.
 
     TODO: Layer should be an injectable factory
-    TODO: publish initial device state
+    TODO: Save states on disconnect/remember states
+    TODO: Extend base exception classes
 
     client      DomotiPi.mqtt.Client    MQTT client
     objectId    string                  Unique object ID based on name and ID of parent
@@ -19,6 +20,7 @@ class Mqtt(Hoogvliet):
 
     objectId: str
     topic: dict
+
 
     def __init__(self):
         """
@@ -95,7 +97,7 @@ class Mqtt(Hoogvliet):
         self.client.publishSingle(
             self.topic['state'],
             {
-                'state': 'OFF',
+                'state': 'OFF' if ledState == False else 'ON',
                 'brightness' : 255
             }
         )
@@ -111,21 +113,20 @@ class Mqtt(Hoogvliet):
         :type state:        dict
         :return:
         :rtype:             bool
+        :raises:            ValueError
+        TODO: Refactor state to command
         """
         # state ON|OFF, switch LED on|off and publish single message to broker to report back
         if "state" in state.keys():
             match state.get('state'):
                 case "ON":
                     if not super().isLit():
-                        print('turning led ON')
                         # Turn on LEDs and publish ON state
                         super().on()
                         self.client.publishSingle(
                             self.topic['state'],
                             {'state': 'ON'}
                         )
-                    else:
-                        print('led already on')
                 case "OFF":
                     if super().isLit():
                         # Turn off LEDs and publish OFF state
@@ -134,13 +135,9 @@ class Mqtt(Hoogvliet):
                             self.topic['state'],
                          {'state': 'OFF'}
                         )
-                    else:
-                        print('led already off')
                 case _:
-                    # TODO: throw exception about empty command/state OR implement toggle instead
-                    print(' INVALID STATE ')
                     super().off()
-                    return False
+                    raise ValueError(f'State must be either ON or OFF, received {state.get('state')}')
 
         # Color state, call parent with given rgb-255
         if 'color' in state.keys():
@@ -149,11 +146,12 @@ class Mqtt(Hoogvliet):
         # brightness state, call parent with given brightness-255
         if 'brightness' in state.keys():
             self.brightness(state.get('brightness'))
+
         return True
 
 
-    def state(self, payload):
-        return True
+    # def state(self, payload):
+    #     return True
 
 
     def getState(self) -> bool:
@@ -175,11 +173,10 @@ class Mqtt(Hoogvliet):
         :type payload:      int
         :return:
         :rtype:             bool
+        :raises:            ValueError
         """
         if payload > 255 or payload < 0:
-            print("error in brightness")
-            return False
-
+            raise ValueError(f'Brightness expected 0-255, {payload} received instead.')
         super().setBrightness(payload)
 
         return True
@@ -194,15 +191,14 @@ class Mqtt(Hoogvliet):
         :type colorPayload:     dict
         :return:
         :rtype:                 bool
+        :raises:                ValueError
         """
         if (
             not 'r' in colorPayload.keys()
             or not 'g' in colorPayload.keys()
             or not 'b' in colorPayload.keys()
         ):
-            print('rgb not index')
-            # TODO: throw exception, dict should be (r,g,b)
-            return False
+            raise ValueError('Invalid colorPayload, should be {r,g,b}.')
 
         super().setColor(
             colorPayload.get('r'),

@@ -24,3 +24,6 @@
 * Devices
   * Backport color and brightness changes in Hoogvliet back to Action
   * 
+
+* Error handling
+  * Implement custom Exception classes

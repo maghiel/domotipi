@@ -117,11 +117,12 @@ class Hoogvliet(Light):
         return True
 
 
-    def isLit(self):
+    def isLit(self) -> bool:
         """
         Return state of the LED
 
         :return:
+        :rtype:     bool
         """
         return self.__RGBLED.is_active
 
