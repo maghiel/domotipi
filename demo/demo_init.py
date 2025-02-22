@@ -16,3 +16,6 @@ def setPiGPIOEnv():
     cfg = Config()
     os.environ["GPIOZERO_PIN_FACTORY"] = cfg.getValue('pin_factory')
     os.environ["PIGPIO_ADDR"] = cfg.getValue('pigpio_addr')
+
+def cleanUp():
+    print("DomotiPi gracefully exiting by User interrupt")

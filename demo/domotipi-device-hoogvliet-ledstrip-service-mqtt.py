@@ -10,4 +10,8 @@ from DomotiPi.Device.Hoogvliet.LEDStrip.Service.Mqtt import Mqtt
 # Set the PiGPIO env
 demo_init.setPiGPIOEnv()
 
-stripCtl = Mqtt()
+try:
+    stripCtl = Mqtt()
+except KeyboardInterrupt:
+    # TODO: close connection to mqtt broker
+    demo_init.cleanUp()
