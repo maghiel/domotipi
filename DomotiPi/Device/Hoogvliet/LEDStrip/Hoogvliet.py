@@ -1,3 +1,5 @@
+from typing import clear_overloads
+
 from gpiozero import RGBLED
 
 from DomotiPi.Device.Light import Light
@@ -80,9 +82,12 @@ class Hoogvliet(Light):
         :return:
         """
         args = locals()
-        for arg in args:
-            int(arg)
-            if arg < 0 or arg > 1:
+        print(args)
+        for arg in args.items():
+            if type(arg[1]) == type(self):
+                continue
+
+            if arg[1] < 0 or arg[1] > 1:
                 # TODO: throw exception
                 return False
 
@@ -161,16 +166,19 @@ class Hoogvliet(Light):
             # Do not round the value!
             return float(rgb / 255)
 
-        self.__RGBLED.red = convertColor(red)
-        self.__RGBLED.green = convertColor(green)
-        self.__RGBLED.blue = convertColor(blue)
+        red = convertColor(red)
+        green = convertColor(green)
+        blue = convertColor(blue)
+
+        self.__RGBLED.red = red
+        self.__RGBLED.green = green
+        self.__RGBLED.blue = blue
 
         # Store color values and pretend brightness is 1
-        # TODO: remove duplication
         self.setColorValue(
-            convertColor(red),
-            convertColor(green),
-            convertColor(blue),
+            red,
+            green,
+            blue,
             1
         )
 
