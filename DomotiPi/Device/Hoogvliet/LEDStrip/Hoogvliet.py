@@ -5,13 +5,12 @@ from DomotiPi.Device.Light import Light
 
 class Hoogvliet(Light):
     """
-    Class LEDStrip. Extends Light.
+    Class Hoogvliet. Extends Light.
+    SoundLogic RGB LED Strip sold at Hoogvliet stores.
 
-    This class will talk to a dumb LED strip with separate r, g and b LEDs and creates different LED
-    instances for each LED.
-    Cheap strips like these are not suitable for usage with RGBLED, as colors can't be mixed.
+    This class will talk to a dumb RGB LED strip using gpiozero.RGBLED
 
-    TODO: implement gpiozero.LED methods
+    TODO: implement gpiozero.RGBLED methods
     """
     __pinRed: int
     __pinGreen: int
@@ -20,6 +19,7 @@ class Hoogvliet(Light):
     __RGBLED: RGBLED
 
     _colorValue: list
+
 
     def __init__(self):
         """
@@ -56,14 +56,43 @@ class Hoogvliet(Light):
             pwm=True
         )
 
-        self._colorValue = [
-            self.__RGBLED.red,      # Red
-            self.__RGBLED.green,    # Green
-            self.__RGBLED.blue,     # Blue
-            1                       # Brightness
-        ]
+        # Store current color values
+        self.setColorValue(
+            self.__RGBLED.red,        # Red
+            self.__RGBLED.green,      # Green
+            self.__RGBLED.blue,       # Blue
+            1               # Brightness
+
+        )
 
         pass
+
+
+    def setColorValue(self, red : float, green : float, blue : float, brightness : float):
+        """
+        Sets property colorValue with r,g,b and brightness values in 0-1 scale.
+        Typically used for "remembering" the last brightness setting in order to calculate proper factor.
+
+        :param red:             Red
+        :param green:           Green
+        :param blue:            Blue
+        :param brightness:      Brightness
+        :return:
+        """
+        args = locals()
+        for arg in args:
+            int(arg)
+            if arg < 0 or arg > 1:
+                # TODO: throw exception
+                return False
+
+        self._colorValue = [
+            red,            # Red
+            green,          # Green
+            blue,           # Blue
+            brightness      # Brightness
+        ]
+
 
     def on(self):
         """
@@ -98,8 +127,20 @@ class Hoogvliet(Light):
 
 
     def setColor(self, red: int or float, green: int or float, blue: int or float) -> bool:
+        """
+        Sets new color with given r,g and b values.
+        Accepts both RGB 0-1 and 255.
 
-        def convertColor(rgb: int or float):
+        :param red:     Red LED value
+        :type red:      int or float
+        :param green:   Green LED value
+        :type green:    int or float
+        :param blue:    Blue LED value
+        :type blue:     int or float
+        :return:
+        :rtype:         bool
+        """
+        def convertColor(rgb: int or float) -> float:
             """
             convertColor
             Takes either int or float and converts the color to 0-1 format
@@ -125,6 +166,7 @@ class Hoogvliet(Light):
         self.__RGBLED.blue = convertColor(blue)
 
         # Store color values and pretend brightness is 1
+        # TODO: remove duplication
         self.setColorValue(
             convertColor(red),
             convertColor(green),
@@ -136,6 +178,15 @@ class Hoogvliet(Light):
 
 
     def setBrightness(self, brightness: int or float) -> bool:
+        """
+        Sets brightness equally on red, green and blue.
+        Accepts both RGB 0-1 and 255 as arguments.
+
+        :param brightness:  Brightness value in either RGB 0-1 or 255
+        :type brightness:   int or float
+        :return:
+        :rtype:             bool
+        """
         # Convert brightness to 0-1 scale if param is int
         if type(brightness) == int:
             brightness = brightness / 255
@@ -143,7 +194,17 @@ class Hoogvliet(Light):
         # Calculate factor from current/previous brightness
         brightnessFactor = brightness / self._colorValue[3]
 
-        def calcColor(color, factor):
+        def calcColor(color : float, factor : float) -> float:
+            """
+            Calculate new color value with given brightness factor.
+
+            :param color:       Old color value
+            :type color:        float
+            :param factor:      Difference factor between old and new brightness
+            :type factor:       float
+            :return:
+            :rtype:             float
+            """
             color = color * factor
             if color > 1:
                 color = 1
@@ -151,13 +212,13 @@ class Hoogvliet(Light):
                 color = 0
 
             return color
-        # def calcFactor(ledValue, brightnessValue):
-        #     return ledValue * brightnessValue / 255
 
+        # Set new value on all LEDs
         self.__RGBLED.red = calcColor(self.__RGBLED.red, brightnessFactor)
         self.__RGBLED.green = calcColor(self.__RGBLED.green, brightnessFactor)
         self.__RGBLED.blue = calcColor(self.__RGBLED.blue, brightnessFactor)
 
+        # Store new values
         self.setColorValue(
             self.__RGBLED.red,
             self.__RGBLED.green,
@@ -166,54 +227,3 @@ class Hoogvliet(Light):
         )
 
         return True
-
-    def setColorValue(self, red : float, green : float, blue : float, brightness : float):
-        self._colorValue = [
-            red,            # Red
-            green,          # Green
-            blue,           # Blue
-            brightness      # Brightness
-        ]
-
-    # def setBrightness(self, brightness: int or float) -> bool:
-    #     """
-    #     Set brightness on red, green and blue
-    #
-    #     :param brightness:  Brightness in 0-1 (float) or 0-255 (int) scale
-    #     :type brightness:   int|float
-    #     :return:
-    #     :rtype:             bool
-    #     """
-    #     print(f"pre-brightness: {brightness}")
-    #     # Convert brightness to 0-1 scale if param is int
-    #     if type(brightness) == int:
-    #         brightness = brightness / 255
-    #     print(f"brightness after division: {brightness}")
-    #
-    #     def calcFactor(ledValue, brightnessValue):
-    #         if ledValue > brightnessValue:
-    #             return ledValue * brightnessValue
-    #
-    #         if brightnessValue > ledValue:
-    #             return ledValue * (brightnessValue + 1)
-    #
-    #         # newValue = (ledValue * (brightnessValue / 1))
-    #         # if newValue >= 1:
-    #         #     newValue = newValue / 10
-    #
-    #         #newValue = ledValue * brightnessValue
-    #         print(f'NEWVALUE: {newValue}')
-    #         if newValue >= 1:
-    #             return 1
-    #         return newValue
-    #
-    #     print(f'brightness is: {brightness}')
-    #
-    #     print(f'red: {self.__RGBLED.red}')
-    #     print(f"value will be set to {self.__RGBLED.red} * (1 / {brightness}")
-    #     self.__RGBLED.red = calcFactor(self.__RGBLED.red, brightness)
-    #     print(f'red after: {self.__RGBLED.red}')
-    #     self.__RGBLED.green = calcFactor(self.__RGBLED.green, brightness)
-    #     self.__RGBLED.blue = calcFactor(self.__RGBLED.blue, brightness)
-    #
-    #     return True
