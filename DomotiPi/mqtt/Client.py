@@ -1,3 +1,5 @@
+from sys import implementation
+
 import paho.mqtt.client
 import paho.mqtt.client as mqttClient
 import paho.mqtt.publish as mqttPublish
@@ -25,6 +27,7 @@ class Client:
     mPublish: mqttPublish
 
     client: paho.mqtt.client.Client
+
 
     def __init__(self):
         """
@@ -99,27 +102,26 @@ class Client:
         :type loop:         bool
         :return:
         """
-        def onMessage(self, userdata, message):
+
+        def onMessage(message):
+            """
+            MQTT hook on receiving message/payload
+
+            :param message:
+            :raises:        NotImplementedError
+            """
             # Decode mqtt payload to str and convert to dict
             msgdec = json.loads(message.payload.decode('utf-8'))
 
-            print(f"STATE PAYLOAD: {msgdec}")
             match ctlType:
                 # Forward payload to ctlObject.command()
                 case 'command':
                     ctlObject.command(msgdec)
-                    # print('after command')
-                    # print(msgdec.keys())
-                    # if "color" in msgdec.keys():
-                    #     print('FOUND COLOR')
-                    #     ctlObject.color(msgdec.get('color'))
                 # Forward state to ctlObject. Will probably be removed
                 case 'state':
                     ctlObject.state(msgdec)
                 case _:
-                    # TODO: throw exception invalid command type
-                    print('error')
-                    return False
+                    raise NotImplementedError('State topics other than command and state not implemented yet.')
 
         client = self.client
 
