@@ -190,3 +190,12 @@ class Client:
         :return:
         """
         self.client.loop_forever()
+
+
+    def disconnect(self):
+        """
+        Disconnect from the MQTT broker
+
+        :return:
+        """
+        self.client.disconnect()
