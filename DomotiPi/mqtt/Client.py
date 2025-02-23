@@ -1,8 +1,5 @@
-from sys import implementation
-
 import paho.mqtt.client
 import paho.mqtt.client as mqttClient
-import paho.mqtt.publish as mqttPublish
 
 import json
 
@@ -23,9 +20,6 @@ class Client:
 
     config: dict
 
-    mClient: mqttClient
-    mPublish: mqttPublish
-
     client: paho.mqtt.client.Client
 
 
@@ -35,9 +29,6 @@ class Client:
 
         Instantiate MQTT client and publish objects and load configuration
         """
-        self.mClient = mqttClient
-        self.mPublish = mqttPublish
-
         # Configuration
         cfg = Config()
         self.config = cfg.getValue('mqtt')
@@ -56,7 +47,7 @@ class Client:
 
         :return: paho.mqtt.client.Client
         """
-        client = self.mClient.Client()
+        client = mqttClient.Client()
         client.username_pw_set(
             self.config['client']['username'],
             self.config['client']['password']
@@ -103,7 +94,7 @@ class Client:
         :return:
         """
 
-        def onMessage(message):
+        def onMessage(self, userdata, message):
             """
             MQTT hook on receiving message/payload
 
