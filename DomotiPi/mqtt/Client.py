@@ -1,5 +1,4 @@
 import paho.mqtt.client
-import paho.mqtt.client as mqttClient
 
 import json
 
