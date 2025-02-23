@@ -117,6 +117,13 @@ class Hoogvliet(Light):
         return True
 
 
+    def toggle(self):
+        """
+        Toggle on/off state on LEDs
+        """
+        self.__RGBLED.toggle()
+
+
     def isLit(self) -> bool:
         """
         Return state of the LED
@@ -231,3 +238,17 @@ class Hoogvliet(Light):
         )
 
         return True
+
+
+    def blink(self):
+        """
+        Blink all LEDs with current color as on_color
+        """
+        self.__RGBLED.blink(on_color=self.__RGBLED.color)
+
+
+    def pulse(self):
+        """
+        Pulse all LEDs with current color as on_color
+        """
+        self.__RGBLED.pulse(on_color=self.__RGBLED.color)
