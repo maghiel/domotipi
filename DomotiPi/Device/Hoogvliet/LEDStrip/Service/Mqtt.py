@@ -79,13 +79,19 @@ class Mqtt(Hoogvliet):
                 'cmd_t': '~/set',
                 'stat_t': '~/state',
                 'schema': 'json',
-                'brightness': False,
+                'brightness': True,
                 'color': (
                     'r',
                     'g',
                     'b',
                 ),
                 'supported_color_modes': 'rgb',
+                'effect' : True,
+                'effect_list': (
+                    'normal',
+                    'blink',
+                    'pulse',
+                ),
                 #'color_mode' : 'rgb',              # Deprecated!
                 #'color_temp': 0,                   # probably not needed
         }
@@ -147,6 +153,10 @@ class Mqtt(Hoogvliet):
         if 'brightness' in state.keys():
             self.brightness(state.get('brightness'))
 
+        # It's disco time
+        if 'effect' in state.keys():
+            self.effect(state.get('effect'))
+
         return True
 
 
@@ -205,5 +215,27 @@ class Mqtt(Hoogvliet):
             colorPayload.get('g'),
             colorPayload.get('b')
         )
+
+        return True
+
+
+    def effect(self, effect: str) -> bool:
+        """
+        Call parent with given effect
+
+        :param effect:  The effect to use
+        :type effect:   str
+        :return:
+        :raises:        ValueError
+        """
+        match effect:
+            case 'normal':
+                super().toggle()
+            case 'blink':
+                super().blink()
+            case 'pulse':
+                super().pulse()
+            case _:
+                raise ValueError(f'Effect {effect} not supported by device.')
 
         return True
