@@ -40,13 +40,13 @@ class Client:
         pass
 
 
-    def connect(self) -> mqttClient.Client:
+    def connect(self) -> paho.mqtt.client.Client:
         """
         Connect client to broker
 
         :return: paho.mqtt.client.Client
         """
-        client = mqttClient.Client()
+        client = paho.mqtt.client.Client()
         client.username_pw_set(
             self.config['client']['username'],
             self.config['client']['password']

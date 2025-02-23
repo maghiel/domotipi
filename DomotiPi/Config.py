@@ -39,13 +39,13 @@ class Config:
 
         :rtype: dict
         :return:
+        :raises:    FileNotFoundError
         """
         cfgIO = self.cfgDefaultFile
         if os.path.isfile(self.cfgFile):
             cfgIO = self.cfgFile
         elif not os.path.isfile(self.cfgDefaultFile):
-            # TODO: throw exception
-            print('error')
+            raise FileNotFoundError('Both default and custom configuration files not found.')
 
         with open(f'{cfgIO}') as ioStream:
             configStream = yaml.safe_load(ioStream)
@@ -57,14 +57,13 @@ class Config:
         """
         Get value for given index
 
-        :param index: str
-
+        :param index:
+        :type index:    str
         :return:
-        :rtype: any
+        :rtype:         any
+        :raises:    IndexError
         """
         if not index in self.cfg.keys():
-            print(f'error, key {index} not found')
-            # TODO: Throw exception
-            return
+            raise IndexError(f'Key {index} not found.')
 
         return self.cfg.get(index)
