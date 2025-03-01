@@ -1,11 +1,11 @@
-from gpiozero import RGBLED
+from gpiozero import RGBLED as RGBLEDIO
 
-from DomotiPi.Device.Light import Light
+from DomotiPi.Device.Light.Light import Light
 
 
-class Hoogvliet(Light):
+class RGBLED(Light):
     """
-    Class Hoogvliet. Extends Light.
+    Class RGBLED. Extends Light.
     SoundLogic RGB LED Strip sold at Hoogvliet stores.
 
     This class will talk to a dumb RGB LED strip using gpiozero.RGBLED
@@ -16,7 +16,7 @@ class Hoogvliet(Light):
     __pinGreen: int
     __pinBlue: int
 
-    __RGBLED: RGBLED
+    __RGBLED: RGBLEDIO
 
     _colorValue: list
 
@@ -48,7 +48,7 @@ class Hoogvliet(Light):
         I'm not completely sure, but setting LOW on GPIO pins makes them ground?
         It works for now, would it blow up? This also means that active_high should be set to False.
         """
-        self.__RGBLED = RGBLED(
+        self.__RGBLED = RGBLEDIO(
             self.__pinRed,
             self.__pinGreen,
             self.__pinBlue,

@@ -1,12 +1,12 @@
-from DomotiPi.Device.Hoogvliet.LEDStrip.Hoogvliet import Hoogvliet
+from DomotiPi.Device.Light.LED import RGBLED
 from DomotiPi.mqtt.Client import Client
 
 
-class Mqtt(Hoogvliet):
+class Mqtt(RGBLED):
     """
-    Class DomotiPi.Device.Action.LEDStrip.Service.Mqtt
+    Class DomotiPi.Device.Light.LED.Service.Mqtt
 
-    Mqtt service layer for LEDStrip.
+    Mqtt service layer for LED.
 
     TODO: Layer should be an injectable factory
     TODO: Save states on disconnect/remember states

@@ -4,10 +4,8 @@ DomotiPi development testscript
 Abstract Light device test script
 Device: DomotiPi.Device.Light
 """
-from pprint import pprint
 
-import demo_init
-from DomotiPi.Device.Light import Light
+from DomotiPi.Device.Light.Light import Light
 
 
 # DomotiPi.Device.Light test
