@@ -18,7 +18,8 @@ class Light(DeviceAbstract):
         :type name:             str
         :param description:     Device description
         :type description:      str
-        :param service:         object
+        :param service:         Device service (MQTT, REST, ...)
+        :type service:          object
         """
         options = locals()
         self.setOptions(options)
@@ -40,6 +41,8 @@ class Light(DeviceAbstract):
             # Generate method name from option key
             method = f"set{option[0][0].upper() + option[0][1:]}"
 
+            # Call setter with value.
+            # Non-callable methods are simply skipped to allow more freedom in extending classes
             if callable(setter := getattr(self, method, 'None')):
                 setter(option[1])
                 continue
