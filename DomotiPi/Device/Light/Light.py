@@ -9,7 +9,16 @@ class Light(DeviceAbstract):
 
     def __init__(self, id: int, name: str, description: str, service: object):
         """
-        Constructor
+        Constructor.
+        Calls setOptions and sets arguments as properties
+
+        :param id:              Device identifier
+        :type id:               int
+        :param name:            Device name
+        :type name:             str
+        :param description:     Device description
+        :type description:      str
+        :param service:         object
         """
         options = locals()
         self.setOptions(options)
