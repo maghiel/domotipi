@@ -21,26 +21,26 @@ class RGBLED(Light):
     _colorValue: list
 
 
-    def __init__(self):
+    def __init__(self, id: int, name: str, description: str, service: object, pins: dict):
         """
         Constructor
 
         Sets parent, properties and instantiates LED objects for each pin
+
+        TODO: utilize gpiozero's pin factory
         """
         # Init parent
-        Light.__init__(self)
-        self._id = 5
-        self._name = "Hoogvliet SoundLogic RGB LED strip"
-        self._description = "Tuya RGB LED strip with SoundLogic brand sold at Hoogvliet in the bargain bin."
+        super().__init__(id, name, description, service)
 
         """
         Declare pin-numbers for red, green and blue
 
-        NOTE: gpiozero uses GPIO pin-numbers instead of physical pin-numbers
+        NOTE: gpiozero uses GPIO pin-numbers instead of physical pin-numbers            
         """
-        self.__pinRed = 17  # Board 11
-        self.__pinGreen = 27  # Board 13
-        self.__pinBlue = 22  # Board 15
+        # TODO: error handling on pins argument
+        self.__pinRed = pins.get('red')
+        self.__pinGreen = pins.get('green')
+        self.__pinBlue = pins.get('blue')
 
         """
         Init LED classes
