@@ -24,10 +24,22 @@ class RGBLED(Light):
     def __init__(self, id: int, name: str, description: str, service: object, pins: dict):
         """
         Constructor
-
-        Sets parent, properties and instantiates LED objects for each pin
+        Sets properties and instantiates RGBLED instance
 
         TODO: utilize gpiozero's pin factory
+
+        :param id:          Device identifier
+        :type id:           int
+        :param name:        Device name
+        :type name:         str
+        :param description: Device description
+        :type description:  str
+        :param service:     Device service layer
+        :type service:      object
+        :param pins:        GPIO pin numbers for red, green and blue
+        :type pins:         dict
+        :return:
+        :rtype:             self
         """
         # Init parent
         super().__init__(id, name, description, service)
@@ -64,7 +76,7 @@ class RGBLED(Light):
             1               # Brightness
         )
 
-        pass
+        return self
 
 
     def setColorValue(self, red : float, green : float, blue : float, brightness : float):
