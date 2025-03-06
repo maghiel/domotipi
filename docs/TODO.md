@@ -29,6 +29,7 @@
         * init
         * engage 
     * Implement (misuse) IsDeviceService interface (abstract in python)
+    * Implement Controllers
 
 * Error handling
   * Implement custom Exception classes
