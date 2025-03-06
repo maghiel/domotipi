@@ -1,8 +1,9 @@
+from DomotiPi.Device.IsDeviceServiceInterface import IsDeviceServiceInterface
 from DomotiPi.Device.Light.LED import RGBLED
 from DomotiPi.mqtt.Client import Client
 
 
-class Mqtt(RGBLED):
+class Mqtt(IsDeviceServiceInterface):
     """
     Class DomotiPi.Device.Light.LED.Service.Mqtt
 
@@ -49,6 +50,10 @@ class Mqtt(RGBLED):
             'state': f"homeassistant/light/{self.objectId}/state"
         }
 
+        pass
+
+
+    def init(self):
         self.configure(self.topic['home'], self.topic['discover'])
 
         # Subscribe to command topic. State will be called once per state-change.
@@ -58,8 +63,6 @@ class Mqtt(RGBLED):
             self,
             True
         )
-
-        pass
 
 
     def configure(self, topic: str, configTopic: str) -> None:
@@ -158,10 +161,6 @@ class Mqtt(RGBLED):
             self.effect(state.get('effect'))
 
         return True
-
-
-    # def state(self, payload):
-    #     return True
 
 
     def getState(self) -> bool:

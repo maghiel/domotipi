@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-
+from DomotiPi.Device import IsDeviceServiceInterface
 
 class DeviceAbstract(ABC):
     """
@@ -12,7 +12,7 @@ class DeviceAbstract(ABC):
     _name: str
     _description: str
 
-    _service: object
+    _service: IsDeviceServiceInterface
 
 
     @abstractmethod
@@ -94,7 +94,7 @@ class DeviceAbstract(ABC):
 
 
     @abstractmethod
-    def getService(self) -> object:
+    def getService(self) -> IsDeviceServiceInterface:
         """
         Return device service-layer (for example MQTT, REST, etc.)
 
@@ -102,21 +102,21 @@ class DeviceAbstract(ABC):
         TODO: stricter type casting
 
         :return:
-        :rtype: object
+        :rtype: IsDeviceServiceInterface
         """
         return self._service
 
 
     @abstractmethod
-    def setService(self, service: object) -> object:
+    def setService(self, service: IsDeviceServiceInterface) -> IsDeviceServiceInterface:
         """
         Set device service-layer.
         For example MQTT, REST, etc.
 
         :param service:
-        :type service:  object
+        :type service:  IsDeviceServiceInterface
         :return:
-        :rtype:         object
+        :rtype:         IsDeviceServiceInterface
         """
         self._service = service
 
