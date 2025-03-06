@@ -118,6 +118,6 @@ class DeviceAbstract(ABC):
         :return:
         :rtype:         IsDeviceServiceInterface
         """
-        self._service = service
+        self._service = service(self)
 
         return self.getService()

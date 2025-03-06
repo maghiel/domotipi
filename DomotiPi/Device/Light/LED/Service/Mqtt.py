@@ -18,25 +18,25 @@ class Mqtt(IsDeviceServiceInterface):
     topic       dict                    Topic dictionary to be defined in constructor
     """
     client: Client
+    device: RGBLED
 
     objectId: str
     topic: dict
 
 
-    def __init__(self):
+    def __init__(self, device: RGBLED):
         """
         Constructor
 
-        Call parent constructor
-        Set ObjectId
+        Instantiate MQTT client,
+        Set Parent Device,
+        Set ObjectId,
         Define MQTT topics
-        Configure MQTT for discovery and subscribe to command topic
         """
-        super().__init__()
-
         self.client = Client()
+        self.device = device
 
-        self.objectId = 'domotipi-hoogvliet_ledstrip' + str(self.getId())
+        self.objectId = 'domotipi-hoogvliet_ledstrip' + str(device.getId())
 
         # TODO: all topics can be based of ~
         self.topic = {
@@ -54,6 +54,11 @@ class Mqtt(IsDeviceServiceInterface):
 
 
     def init(self):
+        """
+        Configure MQTT for discovery and subscribe to command topic
+
+        :return:
+        """
         self.configure(self.topic['home'], self.topic['discover'])
 
         # Subscribe to command topic. State will be called once per state-change.
@@ -77,7 +82,7 @@ class Mqtt(IsDeviceServiceInterface):
         """
         payload = {
                 '~': topic,
-                'name': self.getName(),
+                'name': self.device.getName(),
                 'uniq_id': self.objectId + '-test',     # TODO: remove test suffix from uniq_id
                 'cmd_t': '~/set',
                 'stat_t': '~/state',
@@ -101,7 +106,7 @@ class Mqtt(IsDeviceServiceInterface):
 
         self.client.configure(configTopic, payload)
 
-        ledState = super().isLit()
+        ledState = self.device.isLit()
 
         self.client.publishSingle(
             self.topic['state'],
@@ -129,23 +134,23 @@ class Mqtt(IsDeviceServiceInterface):
         if "state" in state.keys():
             match state.get('state'):
                 case "ON":
-                    if not super().isLit():
+                    if not self.device.isLit():
                         # Turn on LEDs and publish ON state
-                        super().on()
+                        self.device.on()
                         self.client.publishSingle(
                             self.topic['state'],
                             {'state': 'ON'}
                         )
                 case "OFF":
-                    if super().isLit():
+                    if self.device.isLit():
                         # Turn off LEDs and publish OFF state
-                        super().off()
+                        self.device.off()
                         self.client.publishSingle(
                             self.topic['state'],
                          {'state': 'OFF'}
                         )
                 case _:
-                    super().off()
+                    self.device.off()
                     raise ValueError(f'State must be either ON or OFF, received {state.get('state')}')
 
         # Color state, call parent with given rgb-255
@@ -171,7 +176,7 @@ class Mqtt(IsDeviceServiceInterface):
         :return:
         :rtype: bool
         """
-        return super().isLit()
+        return self.device.isLit()
 
 
     def brightness(self, payload: int):
@@ -186,7 +191,7 @@ class Mqtt(IsDeviceServiceInterface):
         """
         if payload > 255 or payload < 0:
             raise ValueError(f'Brightness expected 0-255, {payload} received instead.')
-        super().setBrightness(payload)
+        self.device.setBrightness(payload)
 
         return True
 
@@ -209,7 +214,7 @@ class Mqtt(IsDeviceServiceInterface):
         ):
             raise ValueError('Invalid colorPayload, should be {r,g,b}.')
 
-        super().setColor(
+        self.device.setColor(
             colorPayload.get('r'),
             colorPayload.get('g'),
             colorPayload.get('b')
@@ -229,11 +234,11 @@ class Mqtt(IsDeviceServiceInterface):
         """
         match effect:
             case 'normal':
-                super().toggle()
+                self.device.toggle()
             case 'blink':
-                super().blink()
+                self.device.blink()
             case 'pulse':
-                super().pulse()
+                self.device.pulse()
             case _:
                 raise ValueError(f'Effect {effect} not supported by device.')
 
