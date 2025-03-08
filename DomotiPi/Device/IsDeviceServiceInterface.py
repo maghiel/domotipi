@@ -10,5 +10,3 @@ class IsDeviceServiceInterface(ABC):
     @abstractmethod
     def init(self):
         pass
-
-
