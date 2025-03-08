@@ -8,5 +8,5 @@ class IsDeviceServiceInterface(ABC):
     :extends:   ABC
     """
     @abstractmethod
-    def init(self):
+    def connect(self):
         pass

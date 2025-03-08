@@ -100,7 +100,7 @@ class Mqtt(IsDeviceServiceInterface):
         return self
 
 
-    def init(self):
+    def connect(self):
         """
         Configure MQTT for discovery and subscribe to command topic
 
