@@ -17,8 +17,8 @@ class Mqtt(IsDeviceServiceInterface):
     objectId    string                  Unique object ID based on name and ID of parent
     topic       dict                    Topic dictionary to be defined in constructor
     """
-    client: Client
-    device: RGBLED
+    _client: Client
+    _device: RGBLED
 
     objectId: str
     topic: dict
@@ -33,8 +33,8 @@ class Mqtt(IsDeviceServiceInterface):
         Set ObjectId,
         Define MQTT topics
         """
-        self.client = Client()
-        self.device = device
+        self.setClient(Client())
+        self.setDevice(device)
 
         self.objectId = 'domotipi-hoogvliet_ledstrip' + str(device.getId())
 
@@ -53,6 +53,53 @@ class Mqtt(IsDeviceServiceInterface):
         pass
 
 
+    def getClient(self) -> Client:
+        """
+        Return MQTT client
+
+        :return:
+        :rtype: DomotiPi.mqtt.Client
+        """
+        return self._client
+
+
+    def setClient(self, client: Client):
+        """
+        Set the MQTT client.
+        Note not just any client, like paho, can be used.
+
+        :param client:
+        :type client:   DomotiPi.mqtt.Client
+        :return:
+        :rtype:         self
+        """
+        self._client = client
+        return self
+
+
+    def getDevice(self) -> RGBLED:
+        """
+        Return LED device instance
+
+        :return:
+        :rtype: DomotiPi.Device.Light.LED.RGBLED
+        """
+        return self._device
+
+
+    def setDevice(self, device: RGBLED):
+        """
+        Set the LED device instance
+
+        :param device:
+        :type device:   DomotiPi.Device.Light.LED.RGBLED
+        :return:
+        :rtype:         self
+        """
+        self._device = device
+        return self
+
+
     def init(self):
         """
         Configure MQTT for discovery and subscribe to command topic
@@ -62,7 +109,7 @@ class Mqtt(IsDeviceServiceInterface):
         self.configure(self.topic['home'], self.topic['discover'])
 
         # Subscribe to command topic. State will be called once per state-change.
-        self.client.listen(
+        self.getClient().listen(
             self.topic['command'],
             'command',
             self,
@@ -82,7 +129,7 @@ class Mqtt(IsDeviceServiceInterface):
         """
         payload = {
                 '~': topic,
-                'name': self.device.getName(),
+                'name': self.getDevice().getName(),
                 'uniq_id': self.objectId + '-test',     # TODO: remove test suffix from uniq_id
                 'cmd_t': '~/set',
                 'stat_t': '~/state',
@@ -104,11 +151,11 @@ class Mqtt(IsDeviceServiceInterface):
                 #'color_temp': 0,                   # probably not needed
         }
 
-        self.client.configure(configTopic, payload)
+        self.getClient().configure(configTopic, payload)
 
-        ledState = self.device.isLit()
+        ledState = self.getDevice().isLit()
 
-        self.client.publishSingle(
+        self.getClient().publishSingle(
             self.topic['state'],
             {
                 'state': 'OFF' if ledState == False else 'ON',
@@ -134,23 +181,23 @@ class Mqtt(IsDeviceServiceInterface):
         if "state" in state.keys():
             match state.get('state'):
                 case "ON":
-                    if not self.device.isLit():
+                    if not self.getDevice().isLit():
                         # Turn on LEDs and publish ON state
-                        self.device.on()
-                        self.client.publishSingle(
+                        self.getDevice().on()
+                        self.getClient().publishSingle(
                             self.topic['state'],
                             {'state': 'ON'}
                         )
                 case "OFF":
-                    if self.device.isLit():
+                    if self.getDevice().isLit():
                         # Turn off LEDs and publish OFF state
-                        self.device.off()
-                        self.client.publishSingle(
+                        self.getDevice().off()
+                        self.getClient().publishSingle(
                             self.topic['state'],
                          {'state': 'OFF'}
                         )
                 case _:
-                    self.device.off()
+                    self.getDevice().off()
                     raise ValueError(f'State must be either ON or OFF, received {state.get('state')}')
 
         # Color state, call parent with given rgb-255
@@ -176,7 +223,7 @@ class Mqtt(IsDeviceServiceInterface):
         :return:
         :rtype: bool
         """
-        return self.device.isLit()
+        return self.getDevice().isLit()
 
 
     def brightness(self, payload: int):
@@ -191,7 +238,7 @@ class Mqtt(IsDeviceServiceInterface):
         """
         if payload > 255 or payload < 0:
             raise ValueError(f'Brightness expected 0-255, {payload} received instead.')
-        self.device.setBrightness(payload)
+        self.getDevice().setBrightness(payload)
 
         return True
 
@@ -214,7 +261,7 @@ class Mqtt(IsDeviceServiceInterface):
         ):
             raise ValueError('Invalid colorPayload, should be {r,g,b}.')
 
-        self.device.setColor(
+        self.getDevice().setColor(
             colorPayload.get('r'),
             colorPayload.get('g'),
             colorPayload.get('b')
@@ -234,11 +281,11 @@ class Mqtt(IsDeviceServiceInterface):
         """
         match effect:
             case 'normal':
-                self.device.toggle()
+                self.getDevice().toggle()
             case 'blink':
-                self.device.blink()
+                self.getDevice().blink()
             case 'pulse':
-                self.device.pulse()
+                self.getDevice().pulse()
             case _:
                 raise ValueError(f'Effect {effect} not supported by device.')
 
