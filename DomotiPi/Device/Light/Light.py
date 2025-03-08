@@ -1,3 +1,4 @@
+from DomotiPi.Device.IsDeviceServiceInterface import IsDeviceServiceInterface
 from DomotiPi.DeviceAbstract import DeviceAbstract
 
 
@@ -7,7 +8,7 @@ class Light(DeviceAbstract):
     Base class for light emitting devices (see what I did there?)
     """
 
-    def __init__(self, id: int, name: str, description: str, service: object):
+    def __init__(self, id: int, name: str, description: str, service: IsDeviceServiceInterface):
         """
         Constructor.
         Calls setOptions and sets arguments as properties
@@ -19,7 +20,7 @@ class Light(DeviceAbstract):
         :param description:     Device description
         :type description:      str
         :param service:         Device service (MQTT, REST, ...)
-        :type service:          object
+        :type service:          IsDeviceServiceInterface
         """
         options = locals()
         self.setOptions(options)
@@ -68,8 +69,8 @@ class Light(DeviceAbstract):
     def setDescription(self, description: str) -> str:
         return super().setDescription(description)
 
-    def getService(self) -> object:
+    def getService(self) -> IsDeviceServiceInterface:
         return super().getService()
 
-    def setService(self, service : object):
+    def setService(self, service : IsDeviceServiceInterface):
         return super().setService(service)
