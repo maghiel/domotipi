@@ -22,9 +22,10 @@ class Mqtt(IsDeviceServiceInterface):
 
     objectId: str
     topic: dict
+    _topicPrefix: str
 
 
-    def __init__(self, device: RGBLED):
+    def __init__(self, device: RGBLED, topicPrefix: str):
         """
         Constructor
 
@@ -35,19 +36,21 @@ class Mqtt(IsDeviceServiceInterface):
         """
         self.setClient(Client())
         self.setDevice(device)
+        self.setTopicPrefix(topicPrefix)
 
         self.objectId = 'domotipi-hoogvliet_ledstrip' + str(device.getId())
+        prefix = f"{self.getTopicPrefix()}/light"
 
         # TODO: all topics can be based of ~
         self.topic = {
             # Base
-            'home': f"homeassistant/light/{self.objectId}",
+            'home': f"{prefix}/{self.objectId}",
             # Configuration
-            'discover': f"homeassistant/light/{self.objectId}/config",
+            'discover': f"{prefix}/{self.objectId}/config",
             # Command / set topic
-            'command': f"homeassistant/light/{self.objectId}/set",
+            'command': f"{prefix}/{self.objectId}/set",
             # State topic
-            'state': f"homeassistant/light/{self.objectId}/state"
+            'state': f"{prefix}/{self.objectId}/state"
         }
 
         pass
@@ -98,6 +101,28 @@ class Mqtt(IsDeviceServiceInterface):
         """
         self._device = device
         return self
+
+
+    def getTopicPrefix(self) -> str:
+        """
+        Return MQTT topic prefix
+
+        :return:
+        :rtype: str
+        """
+        return self._topicPrefix
+
+
+    def setTopicPrefix(self, prefix: str):
+        """
+        Set MQTT topic prefix.
+        Examples: home, living, homeassistant
+
+        :param prefix:
+        :type prefix:   str
+        :return:
+        """
+        self._topicPrefix = prefix
 
 
     def connect(self):
