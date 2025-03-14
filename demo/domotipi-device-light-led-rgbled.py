@@ -1,24 +1,32 @@
 """
-DomotiPi development testscript
+DomotiPi Device LED development/demo script
 
-Basic led strip on and off test
-Device: DomotiPi.Device.Light.LED.RGBLED
+
 """
-
 import demo_init
-from time import sleep
 
 from DomotiPi.Device.Light.LED.RGBLED import RGBLED
+from DomotiPi.Device.Light.LED.Service.Mqtt import Mqtt
 
 
-# Set the pigpio environment
 demo_init.setPiGPIOEnv()
 
-# DomotiPi.Device.Action.LED test
-# Basic led strip on and off test
-strip = RGBLED()
-strip.on()
+service = Mqtt()
 
-sleep(5)
+light = RGBLED(
+    5,
+    'Hoogvliet Abstraction',
+    'Hoogvliet Abstraction Test',
+    service,
+    {
+        'red' : 17,
+        'green' : 27,
+        'blue' : 22
+    }
+)
 
-strip.off()
+try:
+    light.getService().connect()
+except KeyboardInterrupt:
+    light.off()
+    demo_init.cleanUp()
