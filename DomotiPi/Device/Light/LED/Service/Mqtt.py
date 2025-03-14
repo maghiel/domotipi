@@ -9,7 +9,6 @@ class Mqtt(IsDeviceServiceInterface):
 
     Mqtt service layer for LED.
 
-    TODO: Layer should be an injectable factory
     TODO: Save states on disconnect/remember states
     TODO: Extend base exception classes
 
@@ -57,6 +56,7 @@ class Mqtt(IsDeviceServiceInterface):
         :param device:  Device instance
         :type device:   RGBLED
         :return:
+        :rtype:         self
         """
         self.setDevice(device)
 
@@ -88,9 +88,11 @@ class Mqtt(IsDeviceServiceInterface):
         """
         Configure MQTT for discovery and subscribe to command topic
 
+        :raises:    ReferenceError
         :return:
         """
-        # TODO: check if factory was called, throw exception
+        if not isinstance(self.getDevice(), RGBLED):
+            raise ReferenceError('Device not set. Was factory called before attempting to use the service?')
 
         self.configure(self.topic['home'], self.topic['discover'])
 
