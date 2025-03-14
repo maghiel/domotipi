@@ -27,7 +27,7 @@ class Mqtt(IsDeviceServiceInterface):
     _topicPrefix: str
 
 
-    def __init__(self, topicPrefix: str):
+    def __init__(self, topicPrefix=''):
         """
         Constructor
         Instantiate MQTT client and set topicPrefix.
