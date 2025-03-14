@@ -1,7 +1,7 @@
 from DomotiPi.Device.IsDeviceServiceInterface import IsDeviceServiceInterface
-from DomotiPi.Device.Light.LED import RGBLED
+from DomotiPi.Device.Light.LED.RGBLED import RGBLED
 from DomotiPi.mqtt.Client import Client
-
+from DomotiPi.Config import Config
 
 class Mqtt(IsDeviceServiceInterface):
     """
@@ -17,6 +17,8 @@ class Mqtt(IsDeviceServiceInterface):
     objectId    string                  Unique object ID based on name and ID of parent
     topic       dict                    Topic dictionary to be defined in constructor
     """
+    NS_DEVICE = 'domotipi'
+
     _client: Client
     _device: RGBLED
 
@@ -25,20 +27,46 @@ class Mqtt(IsDeviceServiceInterface):
     _topicPrefix: str
 
 
-    def __init__(self, device: RGBLED, topicPrefix: str):
+    def __init__(self, topicPrefix: str):
         """
         Constructor
+        Instantiate MQTT client and set topicPrefix.
+        Additionally, factory should be called by the parent device.
 
-        Instantiate MQTT client,
-        Set Parent Device,
-        Set ObjectId,
-        Define MQTT topics
+        :param topicPrefix:
+        :type topicPrefix:  str
         """
         self.setClient(Client())
-        self.setDevice(device)
+
+        if not topicPrefix:
+            cfg = Config().getValue('mqtt')
+            topicPrefix = cfg['topic_prefix']
+
         self.setTopicPrefix(topicPrefix)
 
-        self.objectId = 'domotipi-hoogvliet_ledstrip' + str(device.getId())
+        pass
+
+
+    def factory(self, device: RGBLED):
+        """
+        'Manufacture' this service instance.
+        Not a true factory, but well:
+        Sets device instance,
+        Sets MQTT topics
+
+        :param device:  Device instance
+        :type device:   RGBLED
+        :return:
+        """
+        self.setDevice(device)
+
+        # Convert device name to "safe" name; lowercase and spaces replaced by underscores
+        # TODO: remove special characters and move to a tool class
+        deviceSafeName = (self.getDevice().getName()).lower().replace(' ', '_')
+
+        # Set objectId from NS_DEVICE, safe name and id, by example: domotipi-mybrand_light-23
+        self.objectId = self.NS_DEVICE + '-' + deviceSafeName + '-' + str(device.getId())
+
         prefix = f"{self.getTopicPrefix()}/light"
 
         # TODO: all topics can be based of ~
@@ -53,7 +81,26 @@ class Mqtt(IsDeviceServiceInterface):
             'state': f"{prefix}/{self.objectId}/state"
         }
 
-        pass
+        return self
+
+
+    def connect(self):
+        """
+        Configure MQTT for discovery and subscribe to command topic
+
+        :return:
+        """
+        # TODO: check if factory was called, throw exception
+
+        self.configure(self.topic['home'], self.topic['discover'])
+
+        # Subscribe to command topic. State will be called once per state-change.
+        self.getClient().listen(
+            self.topic['command'],
+            'command',
+            self,
+            True
+        )
 
 
     def getClient(self) -> Client:
@@ -123,23 +170,6 @@ class Mqtt(IsDeviceServiceInterface):
         :return:
         """
         self._topicPrefix = prefix
-
-
-    def connect(self):
-        """
-        Configure MQTT for discovery and subscribe to command topic
-
-        :return:
-        """
-        self.configure(self.topic['home'], self.topic['discover'])
-
-        # Subscribe to command topic. State will be called once per state-change.
-        self.getClient().listen(
-            self.topic['command'],
-            'command',
-            self,
-            True
-        )
 
 
     def configure(self, topic: str, configTopic: str) -> None:

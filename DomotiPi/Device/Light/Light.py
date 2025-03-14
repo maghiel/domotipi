@@ -28,7 +28,8 @@ class Light(DeviceAbstract):
 
     def setOptions(self, options: dict):
         """
-        Set class properties from given dict of arguments
+        Set class properties from given dict of arguments.
+        Non-callable methods are skipped to allow more freedom in extending classes.
 
         :param options:     Arguments passed to typically the constructor
         :type options:      Dict

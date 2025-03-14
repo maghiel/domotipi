@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from DomotiPi.Device import IsDeviceServiceInterface
+from DomotiPi.Device.IsDeviceServiceInterface import IsDeviceServiceInterface
 
 class DeviceAbstract(ABC):
     """
@@ -118,6 +118,8 @@ class DeviceAbstract(ABC):
         :return:
         :rtype:         IsDeviceServiceInterface
         """
-        self._service = service(self)
+        service.factory(self)
+
+        self._service = service
 
         return self.getService()
