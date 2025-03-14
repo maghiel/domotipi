@@ -1,5 +1,6 @@
 from gpiozero import RGBLED as RGBLEDIO
 
+from DomotiPi.Device.IsDeviceServiceInterface import IsDeviceServiceInterface
 from DomotiPi.Device.Light.Light import Light
 
 
@@ -21,7 +22,7 @@ class RGBLED(Light):
     _colorValue: list
 
 
-    def __init__(self, id: int, name: str, description: str, service: object, pins: dict):
+    def __init__(self, id: int, name: str, description: str, service: IsDeviceServiceInterface, pins: dict):
         """
         Constructor
         Sets properties and instantiates RGBLED instance
@@ -75,8 +76,6 @@ class RGBLED(Light):
             self.__RGBLED.blue,       # Blue
             1               # Brightness
         )
-
-        return self
 
 
     def setColorValue(self, red : float, green : float, blue : float, brightness : float):
