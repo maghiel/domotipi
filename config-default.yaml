@@ -17,8 +17,12 @@ pigpio_addr: 127.0.0.1
 # HINT: for HASS users: new users are preferably created through HASS user management
 #
 
-# MQTT broker settings
+# MQTT settings
 mqtt:
+  # Topic prefix. Examples: homeassistant, livingroom
+  topic_prefix: homeassistant
+
+  # Broker settings
   host:
     hostname: 192.168.1.1
     port: 1883
