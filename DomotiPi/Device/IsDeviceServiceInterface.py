@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from DomotiPi.DeviceAbstract import DeviceAbstract
+#from DomotiPi.DeviceAbstract import DeviceAbstract
 
 
 class IsDeviceServiceInterface(ABC):
@@ -11,7 +11,7 @@ class IsDeviceServiceInterface(ABC):
     :extends:   ABC
     """
     @abstractmethod
-    def factory(self, device: DeviceAbstract):
+    def factory(self, device: object):
         pass
 
     @abstractmethod
