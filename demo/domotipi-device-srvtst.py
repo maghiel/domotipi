@@ -1,28 +1,23 @@
+"""
+DomotiPi Device LED development/demo script
+
+
+"""
 import demo_init
+
 from DomotiPi.Device.Light.LED.RGBLED import RGBLED
+from DomotiPi.Device.Light.LED.Service.Mqtt import Mqtt
 
-from DomotiPi.Device.Light.Light import Light
-#from DomotiPi.Device.Light.LED import RGBLED
-from DomotiPi.Device.Light.LED.Service import Mqtt
-from DomotiPi import Config
 
-cfg = Config
+demo_init.setPiGPIOEnv()
 
-# light = Light(
-#     123,
-#     'test name',
-#     'description of test device',
-#     cfg
-# )
-#
-# print(light.getId())
-# print(light.getName())
+service = Mqtt()
 
 light = RGBLED(
     5,
-    'Hoogvliet',
-    'Hoogvliet blabalba',
-    Mqtt,
+    'Hoogvliet Abstraction',
+    'Hoogvliet Abstraction Test',
+    service,
     {
         'red' : 17,
         'green' : 27,
@@ -30,21 +25,8 @@ light = RGBLED(
     }
 )
 
-light.getService().connect()
-
-
-
-# light = RGBLED(
-#     id,
-#     name,
-#     description,
-#     service,
-# )
-# or
-# light = RGBLED(
-#     cfg.loadDevice(name)
-# )
-#
-# light.setService(Mqtt)
-#
-# light.engage()
+try:
+    light.getService().connect()
+except KeyboardInterrupt:
+    light.off()
+    demo_init.cleanUp()
