@@ -15,9 +15,9 @@ class Client:
     TODO: lot of rename refactoring; client is used way too much
     """
 
-    config: dict
+    _config: dict
 
-    client: paho.mqtt.client.Client
+    _client: paho.mqtt.client.Client
 
     def __init__(self):
         """
@@ -27,14 +27,54 @@ class Client:
         """
         # Configuration
         cfg = Config()
-        self.config = cfg.getValue("mqtt")
+        self.setConfig(cfg.getValue("mqtt"))
 
         # TODO: try throw catch
 
         # Instantiate and connect client
-        self.client = self.connect()
+        self.setClient(self.connect())
 
         pass
+
+    def getConfig(self) -> dict:
+        """
+        Return configuration
+
+        :return:
+        :rtype: dict
+        """
+        return self._config
+
+    def setConfig(self, config: dict) -> dict:
+        """
+        Set configuration
+
+        :param config:
+        :type config:   dict
+        :return:
+        :rtype:         dict
+        """
+        self._config = config
+        return self.getConfig()
+
+    def getClient(self) -> paho.mqtt.client.Client:
+        """
+        Return paho MQTT client
+
+        :return:
+        :rtype: paho.mqtt.client.Client
+        """
+        return self._client
+
+    def setClient(self, client: paho.mqtt.client.Client):
+        """
+        Set paho MQTT client
+
+        :param client:
+        :type client:   paho.mqtt.client.Client
+        :return:
+        """
+        self._client = client
 
     def connect(self) -> paho.mqtt.client.Client:
         """
@@ -44,12 +84,12 @@ class Client:
         """
         client = paho.mqtt.client.Client()
         client.username_pw_set(
-            self.config["client"]["username"],
-            self.config["client"]["password"]
+            self.getConfig()["client"]["username"],
+            self.getConfig()["client"]["password"]
         )
         client.connect(
-            self.config["host"]["hostname"],
-            self.config["host"]["port"]
+            self.getConfig()["host"]["hostname"],
+            self.getConfig()["host"]["port"]
         )
 
         return client
@@ -64,7 +104,7 @@ class Client:
         :type payload:      dict
         :return:            bool
         """
-        self.client.publish(topic, json.dumps(payload))
+        self.getClient().publish(topic, json.dumps(payload))
 
         return True
 
@@ -109,7 +149,7 @@ class Client:
                         "State topics other than command and state not implemented yet."
                     )
 
-        client = self.client
+        client = self.getClient()
 
         client.on_message = onMessage
         client.subscribe(topic)
@@ -151,7 +191,7 @@ class Client:
 
         :return:
         """
-        self.client.loop_forever()
+        self.getClient().loop_forever()
 
     def disconnect(self):
         """
@@ -159,4 +199,4 @@ class Client:
 
         :return:
         """
-        self.client.disconnect()
+        self.getClient().disconnect()
