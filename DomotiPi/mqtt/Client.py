@@ -8,13 +8,11 @@ from DomotiPi.Config import Config
 class Client:
     """
     Class DomotiPi.mqtt.Client
-
-    Simple MQTT client
+    Simple MQTT client utilizing Paho's.
 
     Instead of extending mqtt classes new instances are made.
 
     TODO: lot of rename refactoring; client is used way too much
-    TODO: remove testing methods
     """
 
     config: dict
@@ -129,7 +127,6 @@ class Client:
 
         TODO:   Investigate whether or not it's necessary to instantiate a new connection to the broker
                 or the existing connection will suffice.
-        TODO:   Remove reference old code
 
         :param topic:       Topic to publish message to
         :type topic:        str
@@ -147,33 +144,10 @@ class Client:
 
         publisher.loop_stop()
 
-        # Keeping the old stuff below for reference
-
-        # self.client.loop_start()
-        #
-        # self.client.publish(
-        #     topic,
-        #     payload= json.dumps(message)
-        # )
-        #
-        # self.client.loop_stop()
-
-        # self.mPublish.single(
-        #     topic,
-        #     payload= json.dumps(message),
-        #     hostname= self.config['host']['hostname'],
-        #     port= self.config['host']['port'],
-        #     client_id= self.config['client']['client_id'],
-        #     auth= {
-        #         'username': self.config['client']['username'],
-        #         'password': self.config['client']['password']
-        #     },
-        #     protocol= self.mClient.MQTTv311
-        # )
 
     def loop(self):
         """
-        Simply call loop_forever on the mqtt broker.
+        Simply call loop_forever on the mqtt client.
 
         :return:
         """
