@@ -30,4 +30,5 @@ try:
     light.getService().connect()
 except KeyboardInterrupt:
     light.off()
+    light.getService().getClient().disconnect()
     demo_init.cleanUp()
