@@ -1,8 +1,5 @@
 from abc import ABC, abstractmethod
 
-#from DomotiPi.DeviceAbstract import DeviceAbstract
-
-
 class IsDeviceServiceInterface(ABC):
     """
     IsDeviceServiceInterface
@@ -12,6 +9,7 @@ class IsDeviceServiceInterface(ABC):
     """
     @abstractmethod
     def factory(self, device: object):
+        # TODO: circular reference making strong typing impossible.
         pass
 
     @abstractmethod
