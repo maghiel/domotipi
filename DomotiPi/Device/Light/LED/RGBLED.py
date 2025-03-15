@@ -1,11 +1,12 @@
-from gpiozero import RGBLED
+from gpiozero import RGBLED as RGBLEDIO
 
-from DomotiPi.Device.Light import Light
+from DomotiPi.Device.IsDeviceServiceInterface import IsDeviceServiceInterface
+from DomotiPi.Device.Light.Light import Light
 
 
-class Hoogvliet(Light):
+class RGBLED(Light):
     """
-    Class Hoogvliet. Extends Light.
+    Class RGBLED. Extends Light.
     SoundLogic RGB LED Strip sold at Hoogvliet stores.
 
     This class will talk to a dumb RGB LED strip using gpiozero.RGBLED
@@ -16,31 +17,43 @@ class Hoogvliet(Light):
     __pinGreen: int
     __pinBlue: int
 
-    __RGBLED: RGBLED
+    __RGBLED: RGBLEDIO
 
     _colorValue: list
 
 
-    def __init__(self):
+    def __init__(self, id: int, name: str, description: str, service: IsDeviceServiceInterface, pins: dict):
         """
         Constructor
+        Sets properties and instantiates RGBLED instance
 
-        Sets parent, properties and instantiates LED objects for each pin
+        TODO: utilize gpiozero's pin factory
+
+        :param id:          Device identifier
+        :type id:           int
+        :param name:        Device name
+        :type name:         str
+        :param description: Device description
+        :type description:  str
+        :param service:     Device service layer
+        :type service:      object
+        :param pins:        GPIO pin numbers for red, green and blue
+        :type pins:         dict
+        :return:
+        :rtype:             self
         """
         # Init parent
-        Light.__init__(self)
-        self._id = 5
-        self._name = "Hoogvliet SoundLogic RGB LED strip"
-        self._description = "Tuya RGB LED strip with SoundLogic brand sold at Hoogvliet in the bargain bin."
+        super().__init__(id, name, description, service)
 
         """
         Declare pin-numbers for red, green and blue
 
-        NOTE: gpiozero uses GPIO pin-numbers instead of physical pin-numbers
+        NOTE: gpiozero uses GPIO pin-numbers instead of physical pin-numbers            
         """
-        self.__pinRed = 17  # Board 11
-        self.__pinGreen = 27  # Board 13
-        self.__pinBlue = 22  # Board 15
+        # TODO: error handling on pins argument
+        self.__pinRed = pins.get('red')
+        self.__pinGreen = pins.get('green')
+        self.__pinBlue = pins.get('blue')
 
         """
         Init LED classes
@@ -48,7 +61,7 @@ class Hoogvliet(Light):
         I'm not completely sure, but setting LOW on GPIO pins makes them ground?
         It works for now, would it blow up? This also means that active_high should be set to False.
         """
-        self.__RGBLED = RGBLED(
+        self.__RGBLED = RGBLEDIO(
             self.__pinRed,
             self.__pinGreen,
             self.__pinBlue,
@@ -63,8 +76,6 @@ class Hoogvliet(Light):
             self.__RGBLED.blue,       # Blue
             1               # Brightness
         )
-
-        pass
 
 
     def setColorValue(self, red : float, green : float, blue : float, brightness : float):

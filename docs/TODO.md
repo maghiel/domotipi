@@ -22,8 +22,14 @@
   * Abstracting the mqtt client layer.
 
 * Devices
-  * Backport color and brightness changes in Hoogvliet back to Action
-  * 
+  * ~~Backport color and brightness changes in Hoogvliet back to Action~~ 
+  * Services
+    * Refactor Service injection. 
+      * Implement "state" methods like:
+        * init
+        * engage 
+    * Implement (misuse) IsDeviceService interface (abstract in python)
+    * Implement Controllers
 
 * Error handling
   * Implement custom Exception classes

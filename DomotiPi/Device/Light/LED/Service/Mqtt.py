@@ -1,14 +1,14 @@
-from DomotiPi.Device.Hoogvliet.LEDStrip.Hoogvliet import Hoogvliet
+from DomotiPi.Device.IsDeviceServiceInterface import IsDeviceServiceInterface
+from DomotiPi.Device.Light.LED.RGBLED import RGBLED
 from DomotiPi.mqtt.Client import Client
+from DomotiPi.Config import Config
 
-
-class Mqtt(Hoogvliet):
+class Mqtt(IsDeviceServiceInterface):
     """
-    Class DomotiPi.Device.Action.LEDStrip.Service.Mqtt
+    Class DomotiPi.Device.Light.LED.Service.Mqtt
 
-    Mqtt service layer for LEDStrip.
+    Mqtt service layer for LED.
 
-    TODO: Layer should be an injectable factory
     TODO: Save states on disconnect/remember states
     TODO: Extend base exception classes
 
@@ -16,50 +16,162 @@ class Mqtt(Hoogvliet):
     objectId    string                  Unique object ID based on name and ID of parent
     topic       dict                    Topic dictionary to be defined in constructor
     """
-    client: Client
+    NS_DEVICE = 'domotipi'
+
+    _client: Client
+    _device: RGBLED
 
     objectId: str
     topic: dict
+    _topicPrefix: str
 
 
-    def __init__(self):
+    def __init__(self, topicPrefix=''):
         """
         Constructor
+        Instantiate MQTT client and set topicPrefix.
+        Additionally, factory should be called by the parent device.
 
-        Call parent constructor
-        Set ObjectId
-        Define MQTT topics
-        Configure MQTT for discovery and subscribe to command topic
+        :param topicPrefix:
+        :type topicPrefix:  str
         """
-        super().__init__()
+        self.setClient(Client())
 
-        self.client = Client()
+        if not topicPrefix:
+            cfg = Config().getValue('mqtt')
+            topicPrefix = cfg['topic_prefix']
 
-        self.objectId = 'domotipi-hoogvliet_ledstrip' + str(self.getId())
+        self.setTopicPrefix(topicPrefix)
+
+        pass
+
+
+    def factory(self, device: RGBLED):
+        """
+        'Manufacture' this service instance.
+        Not a true factory, but well:
+        Sets device instance,
+        Sets MQTT topics
+
+        :param device:  Device instance
+        :type device:   RGBLED
+        :return:
+        :rtype:         self
+        """
+        self.setDevice(device)
+
+        # Convert device name to "safe" name; lowercase and spaces replaced by underscores
+        # TODO: remove special characters and move to a tool class
+        deviceSafeName = (self.getDevice().getName()).lower().replace(' ', '_')
+
+        # Set objectId from NS_DEVICE, safe name and id, by example: domotipi-mybrand_light-23
+        self.objectId = self.NS_DEVICE + '-' + deviceSafeName + '-' + str(device.getId())
+
+        prefix = f"{self.getTopicPrefix()}/light"
 
         # TODO: all topics can be based of ~
         self.topic = {
             # Base
-            'home': f"homeassistant/light/{self.objectId}",
+            'home': f"{prefix}/{self.objectId}",
             # Configuration
-            'discover': f"homeassistant/light/{self.objectId}/config",
+            'discover': f"{prefix}/{self.objectId}/config",
             # Command / set topic
-            'command': f"homeassistant/light/{self.objectId}/set",
+            'command': f"{prefix}/{self.objectId}/set",
             # State topic
-            'state': f"homeassistant/light/{self.objectId}/state"
+            'state': f"{prefix}/{self.objectId}/state"
         }
+
+        return self
+
+
+    def connect(self):
+        """
+        Configure MQTT for discovery and subscribe to command topic
+
+        :raises:    ReferenceError
+        :return:
+        """
+        if not isinstance(self.getDevice(), RGBLED):
+            raise ReferenceError('Device not set. Was factory called before attempting to use the service?')
 
         self.configure(self.topic['home'], self.topic['discover'])
 
         # Subscribe to command topic. State will be called once per state-change.
-        self.client.listen(
+        self.getClient().listen(
             self.topic['command'],
             'command',
             self,
             True
         )
 
-        pass
+
+    def getClient(self) -> Client:
+        """
+        Return MQTT client
+
+        :return:
+        :rtype: DomotiPi.mqtt.Client
+        """
+        return self._client
+
+
+    def setClient(self, client: Client):
+        """
+        Set the MQTT client.
+        Note not just any client, like paho, can be used.
+
+        :param client:
+        :type client:   DomotiPi.mqtt.Client
+        :return:
+        :rtype:         self
+        """
+        self._client = client
+        return self
+
+
+    def getDevice(self) -> RGBLED:
+        """
+        Return LED device instance
+
+        :return:
+        :rtype: DomotiPi.Device.Light.LED.RGBLED
+        """
+        return self._device
+
+
+    def setDevice(self, device: RGBLED):
+        """
+        Set the LED device instance
+
+        :param device:
+        :type device:   DomotiPi.Device.Light.LED.RGBLED
+        :return:
+        :rtype:         self
+        """
+        self._device = device
+        return self
+
+
+    def getTopicPrefix(self) -> str:
+        """
+        Return MQTT topic prefix
+
+        :return:
+        :rtype: str
+        """
+        return self._topicPrefix
+
+
+    def setTopicPrefix(self, prefix: str):
+        """
+        Set MQTT topic prefix.
+        Examples: home, living, homeassistant
+
+        :param prefix:
+        :type prefix:   str
+        :return:
+        """
+        self._topicPrefix = prefix
 
 
     def configure(self, topic: str, configTopic: str) -> None:
@@ -74,7 +186,7 @@ class Mqtt(Hoogvliet):
         """
         payload = {
                 '~': topic,
-                'name': self.getName(),
+                'name': self.getDevice().getName(),
                 'uniq_id': self.objectId + '-test',     # TODO: remove test suffix from uniq_id
                 'cmd_t': '~/set',
                 'stat_t': '~/state',
@@ -96,11 +208,11 @@ class Mqtt(Hoogvliet):
                 #'color_temp': 0,                   # probably not needed
         }
 
-        self.client.configure(configTopic, payload)
+        self.getClient().configure(configTopic, payload)
 
-        ledState = super().isLit()
+        ledState = self.getDevice().isLit()
 
-        self.client.publishSingle(
+        self.getClient().publishSingle(
             self.topic['state'],
             {
                 'state': 'OFF' if ledState == False else 'ON',
@@ -126,23 +238,23 @@ class Mqtt(Hoogvliet):
         if "state" in state.keys():
             match state.get('state'):
                 case "ON":
-                    if not super().isLit():
+                    if not self.getDevice().isLit():
                         # Turn on LEDs and publish ON state
-                        super().on()
-                        self.client.publishSingle(
+                        self.getDevice().on()
+                        self.getClient().publishSingle(
                             self.topic['state'],
                             {'state': 'ON'}
                         )
                 case "OFF":
-                    if super().isLit():
+                    if self.getDevice().isLit():
                         # Turn off LEDs and publish OFF state
-                        super().off()
-                        self.client.publishSingle(
+                        self.getDevice().off()
+                        self.getClient().publishSingle(
                             self.topic['state'],
                          {'state': 'OFF'}
                         )
                 case _:
-                    super().off()
+                    self.getDevice().off()
                     raise ValueError(f'State must be either ON or OFF, received {state.get('state')}')
 
         # Color state, call parent with given rgb-255
@@ -160,10 +272,6 @@ class Mqtt(Hoogvliet):
         return True
 
 
-    # def state(self, payload):
-    #     return True
-
-
     def getState(self) -> bool:
         """
         Return current state
@@ -172,7 +280,7 @@ class Mqtt(Hoogvliet):
         :return:
         :rtype: bool
         """
-        return super().isLit()
+        return self.getDevice().isLit()
 
 
     def brightness(self, payload: int):
@@ -187,7 +295,7 @@ class Mqtt(Hoogvliet):
         """
         if payload > 255 or payload < 0:
             raise ValueError(f'Brightness expected 0-255, {payload} received instead.')
-        super().setBrightness(payload)
+        self.getDevice().setBrightness(payload)
 
         return True
 
@@ -210,7 +318,7 @@ class Mqtt(Hoogvliet):
         ):
             raise ValueError('Invalid colorPayload, should be {r,g,b}.')
 
-        super().setColor(
+        self.getDevice().setColor(
             colorPayload.get('r'),
             colorPayload.get('g'),
             colorPayload.get('b')
@@ -230,11 +338,11 @@ class Mqtt(Hoogvliet):
         """
         match effect:
             case 'normal':
-                super().toggle()
+                self.getDevice().toggle()
             case 'blink':
-                super().blink()
+                self.getDevice().blink()
             case 'pulse':
-                super().pulse()
+                self.getDevice().pulse()
             case _:
                 raise ValueError(f'Effect {effect} not supported by device.')
 

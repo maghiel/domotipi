@@ -8,6 +8,7 @@
 pin_factory: pigpio
 pigpio_addr: 127.0.0.1
 
+
 #######################################################################################################################
 # MQTT settings
 #######################################################################################################################
@@ -16,8 +17,12 @@ pigpio_addr: 127.0.0.1
 # HINT: for HASS users: new users are preferably created through HASS user management
 #
 
-# MQTT host settings
+# MQTT settings
 mqtt:
+  # Topic prefix. Examples: homeassistant, livingroom
+  topic_prefix: homeassistant
+
+  # Broker settings
   host:
     hostname: 192.168.1.1
     port: 1883
@@ -27,3 +32,30 @@ mqtt:
     client_id: homeassistant_client
     username: homeassistant
     password: password
+
+
+#######################################################################################################################
+# Device configuration. Not implemented yet!
+#######################################################################################################################
+# All devices can optionally be configured here instead of manual instantiation with the required arguments.
+#
+# NOTE: device configuration is likely to be moved
+# NOTE: device setup through config files will possibly become mandatory
+devices:
+  - device:
+      id: 1
+      name: Light
+      description: Base Light class
+      service: None
+  - device:
+      id: 9999
+      name: RGB LED Strip
+      description: Demo RGB LED Strip
+      service: None
+      gpio:
+        pins:
+          red: 17     # Board 11
+          green: 27   # Board 13
+          blue: 22    # Board 15
+        active_high: false
+        pwm : true
