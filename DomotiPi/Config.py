@@ -9,6 +9,7 @@ class Config:
 
     Handles DomotiPi-wide configuration through YAML loading
     """
+
     cfgFile: str = "config.yaml"
     cfgDefaultFile: str = "config-default.yaml"
 
@@ -45,13 +46,14 @@ class Config:
         if os.path.isfile(self.cfgFile):
             cfgIO = self.cfgFile
         elif not os.path.isfile(self.cfgDefaultFile):
-            raise FileNotFoundError('Both default and custom configuration files not found.')
+            raise FileNotFoundError(
+                "Both default and custom configuration files not found."
+            )
 
-        with open(f'{cfgIO}') as ioStream:
+        with open(f"{cfgIO}") as ioStream:
             configStream = yaml.safe_load(ioStream)
 
         return configStream
-
 
     def getValue(self, index: str) -> any:
         """
@@ -64,6 +66,6 @@ class Config:
         :raises:    IndexError
         """
         if not index in self.cfg.keys():
-            raise IndexError(f'Key {index} not found.')
+            raise IndexError(f"Key {index} not found.")
 
         return self.cfg.get(index)

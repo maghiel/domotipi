@@ -8,7 +8,9 @@ class Light(DeviceAbstract):
     Base class for light emitting devices (see what I did there?)
     """
 
-    def __init__(self, id: int, name: str, description: str, service: IsDeviceServiceInterface):
+    def __init__(
+        self, id: int, name: str, description: str, service: IsDeviceServiceInterface
+    ):
         """
         Constructor.
         Calls setOptions and sets arguments as properties
@@ -24,7 +26,6 @@ class Light(DeviceAbstract):
         """
         options = locals()
         self.setOptions(options)
-
 
     def setOptions(self, options: dict):
         """
@@ -45,12 +46,11 @@ class Light(DeviceAbstract):
 
             # Call setter with value.
             # Non-callable methods are simply skipped to allow more freedom in extending classes
-            if callable(setter := getattr(self, method, 'None')):
+            if callable(setter := getattr(self, method, "None")):
                 setter(option[1])
                 continue
 
         return self
-
 
     def getId(self) -> int:
         return super().getId()
@@ -73,5 +73,5 @@ class Light(DeviceAbstract):
     def getService(self) -> IsDeviceServiceInterface:
         return super().getService()
 
-    def setService(self, service : IsDeviceServiceInterface):
+    def setService(self, service: IsDeviceServiceInterface):
         return super().setService(service)

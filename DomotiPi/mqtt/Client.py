@@ -21,7 +21,6 @@ class Client:
 
     client: paho.mqtt.client.Client
 
-
     def __init__(self):
         """
         Constructor.
@@ -30,7 +29,7 @@ class Client:
         """
         # Configuration
         cfg = Config()
-        self.config = cfg.getValue('mqtt')
+        self.config = cfg.getValue("mqtt")
 
         # TODO: try throw catch
 
@@ -38,7 +37,6 @@ class Client:
         self.client = self.connect()
 
         pass
-
 
     def connect(self) -> paho.mqtt.client.Client:
         """
@@ -48,16 +46,15 @@ class Client:
         """
         client = paho.mqtt.client.Client()
         client.username_pw_set(
-            self.config['client']['username'],
-            self.config['client']['password']
+            self.config["client"]["username"],
+            self.config["client"]["password"]
         )
         client.connect(
-            self.config['host']['hostname'],
-            self.config['host']['port']
+            self.config["host"]["hostname"],
+            self.config["host"]["port"]
         )
 
         return client
-
 
     def configure(self, topic: str, payload: dict):
         """
@@ -72,7 +69,6 @@ class Client:
         self.client.publish(topic, json.dumps(payload))
 
         return True
-
 
     def listen(self, topic: str, ctlType: str, ctlObject, loop: bool):
         """
@@ -101,17 +97,19 @@ class Client:
             :raises:        NotImplementedError
             """
             # Decode mqtt payload to str and convert to dict
-            msgdec = json.loads(message.payload.decode('utf-8'))
+            msgdec = json.loads(message.payload.decode("utf-8"))
 
             match ctlType:
                 # Forward payload to ctlObject.command()
-                case 'command':
+                case "command":
                     ctlObject.command(msgdec)
                 # Forward state to ctlObject. Will probably be removed
-                case 'state':
+                case "state":
                     ctlObject.state(msgdec)
                 case _:
-                    raise NotImplementedError('State topics other than command and state not implemented yet.')
+                    raise NotImplementedError(
+                        "State topics other than command and state not implemented yet."
+                    )
 
         client = self.client
 
@@ -122,7 +120,6 @@ class Client:
             client.loop_forever()
 
         pass
-
 
     def publishSingle(self, topic: str, message: dict):
         """
@@ -172,8 +169,7 @@ class Client:
         #         'password': self.config['client']['password']
         #     },
         #     protocol= self.mClient.MQTTv311
-        #)
-
+        # )
 
     def loop(self):
         """
@@ -182,7 +178,6 @@ class Client:
         :return:
         """
         self.client.loop_forever()
-
 
     def disconnect(self):
         """

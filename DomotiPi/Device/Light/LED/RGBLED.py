@@ -13,6 +13,7 @@ class RGBLED(Light):
 
     TODO: implement gpiozero.RGBLED methods
     """
+
     __pinRed: int
     __pinGreen: int
     __pinBlue: int
@@ -21,8 +22,14 @@ class RGBLED(Light):
 
     _colorValue: list
 
-
-    def __init__(self, id: int, name: str, description: str, service: IsDeviceServiceInterface, pins: dict):
+    def __init__(
+        self,
+        id: int,
+        name: str,
+        description: str,
+        service: IsDeviceServiceInterface,
+        pins: dict,
+    ):
         """
         Constructor
         Sets properties and instantiates RGBLED instance
@@ -51,9 +58,9 @@ class RGBLED(Light):
         NOTE: gpiozero uses GPIO pin-numbers instead of physical pin-numbers            
         """
         # TODO: error handling on pins argument
-        self.__pinRed = pins.get('red')
-        self.__pinGreen = pins.get('green')
-        self.__pinBlue = pins.get('blue')
+        self.__pinRed = pins.get("red")
+        self.__pinGreen = pins.get("green")
+        self.__pinBlue = pins.get("blue")
 
         """
         Init LED classes
@@ -77,8 +84,7 @@ class RGBLED(Light):
             1               # Brightness
         )
 
-
-    def setColorValue(self, red : float, green : float, blue : float, brightness : float):
+    def setColorValue(self, red: float, green: float, blue: float, brightness: float):
         """
         Sets property colorValue with r,g,b and brightness values in 0-1 scale.
         Typically used for "remembering" the last brightness setting in order to calculate proper factor.
@@ -95,7 +101,7 @@ class RGBLED(Light):
                 continue
 
             if arg[1] < 0 or arg[1] > 1:
-                raise ValueError('RGB values must be between 0 and 1')
+                raise ValueError("RGB values must be between 0 and 1")
 
         self._colorValue = [
             red,            # Red
@@ -103,7 +109,6 @@ class RGBLED(Light):
             blue,           # Blue
             brightness      # Brightness
         ]
-
 
     def on(self):
         """
@@ -116,7 +121,6 @@ class RGBLED(Light):
 
         return True
 
-
     def off(self):
         """
         Switches all three LEDs off
@@ -127,13 +131,11 @@ class RGBLED(Light):
 
         return True
 
-
     def toggle(self):
         """
         Toggle on/off state on LEDs
         """
         self.__RGBLED.toggle()
-
 
     def isLit(self) -> bool:
         """
@@ -144,8 +146,9 @@ class RGBLED(Light):
         """
         return self.__RGBLED.is_active
 
-
-    def setColor(self, red: int or float, green: int or float, blue: int or float) -> bool:
+    def setColor(
+        self, red: int or float, green: int or float, blue: int or float
+    ) -> bool:
         """
         Sets new color with given r,g and b values.
         Accepts both RGB 0-1 and 255.
@@ -159,6 +162,7 @@ class RGBLED(Light):
         :return:
         :rtype:         bool
         """
+
         def convertColor(rgb: int or float) -> float:
             """
             convertColor
@@ -174,8 +178,8 @@ class RGBLED(Light):
                 return rgb
 
             # Must already be rgb 0-1 if value is between 0 and 1
-#            if 1 > rgb > 0:
-#                return float(rgb)
+            #            if 1 > rgb > 0:
+            #                return float(rgb)
 
             # Do not round the value!
             return float(rgb / 255)
@@ -189,15 +193,9 @@ class RGBLED(Light):
         self.__RGBLED.blue = blue
 
         # Store color values and pretend brightness is 1
-        self.setColorValue(
-            red,
-            green,
-            blue,
-            1
-        )
+        self.setColorValue(red, green, blue, 1)
 
         return True
-
 
     def setBrightness(self, brightness: int or float) -> bool:
         """
@@ -216,7 +214,7 @@ class RGBLED(Light):
         # Calculate factor from current/previous brightness
         brightnessFactor = brightness / self._colorValue[3]
 
-        def calcColor(color : float, factor : float) -> float:
+        def calcColor(color: float, factor: float) -> float:
             """
             Calculate new color value with given brightness factor.
 
@@ -250,13 +248,11 @@ class RGBLED(Light):
 
         return True
 
-
     def blink(self):
         """
         Blink all LEDs with current color as on_color
         """
         self.__RGBLED.blink(on_color=self.__RGBLED.color)
-
 
     def pulse(self):
         """

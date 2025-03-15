@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from DomotiPi.Device.IsDeviceServiceInterface import IsDeviceServiceInterface
 
+
 class DeviceAbstract(ABC):
     """
     Abstract class DeviceAbstract. Extends abc.ABC
@@ -14,7 +15,6 @@ class DeviceAbstract(ABC):
 
     _service: IsDeviceServiceInterface
 
-
     @abstractmethod
     def getId(self) -> int:
         """
@@ -24,7 +24,6 @@ class DeviceAbstract(ABC):
         :rtype: int
         """
         return self._id
-
 
     @abstractmethod
     def setId(self, deviceId: int) -> int:
@@ -37,9 +36,8 @@ class DeviceAbstract(ABC):
         :rtype:             int
         """
         self._id = deviceId
-        
-        return self.getId()
 
+        return self.getId()
 
     @abstractmethod
     def getName(self) -> str:
@@ -50,7 +48,6 @@ class DeviceAbstract(ABC):
         :rtype: str
         """
         return self._name
-
 
     @abstractmethod
     def setName(self, name: str) -> str:
@@ -66,7 +63,6 @@ class DeviceAbstract(ABC):
 
         return self.getName()
 
-
     @abstractmethod
     def getDescription(self) -> str:
         """
@@ -76,7 +72,6 @@ class DeviceAbstract(ABC):
         :rtype: str
         """
         return self._description
-
 
     @abstractmethod
     def setDescription(self, description: str) -> str:
@@ -92,7 +87,6 @@ class DeviceAbstract(ABC):
 
         return self.getDescription()
 
-
     @abstractmethod
     def getService(self) -> IsDeviceServiceInterface:
         """
@@ -105,7 +99,6 @@ class DeviceAbstract(ABC):
         :rtype: IsDeviceServiceInterface
         """
         return self._service
-
 
     @abstractmethod
     def setService(self, service: IsDeviceServiceInterface) -> IsDeviceServiceInterface:

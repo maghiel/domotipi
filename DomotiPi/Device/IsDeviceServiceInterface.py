@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 
+
 class IsDeviceServiceInterface(ABC):
     """
     IsDeviceServiceInterface
@@ -7,6 +8,7 @@ class IsDeviceServiceInterface(ABC):
 
     :extends:   ABC
     """
+
     @abstractmethod
     def factory(self, device: object):
         # TODO: circular reference making strong typing impossible.

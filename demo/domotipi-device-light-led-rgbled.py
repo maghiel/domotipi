@@ -3,6 +3,7 @@ DomotiPi Device LED development/demo script
 
 
 """
+
 import demo_init
 
 from DomotiPi.Device.Light.LED.RGBLED import RGBLED
@@ -15,13 +16,13 @@ service = Mqtt()
 
 light = RGBLED(
     5,
-    'Hoogvliet Abstraction',
-    'Hoogvliet Abstraction Test',
+    "Hoogvliet Abstraction",
+    "Hoogvliet Abstraction Test",
     service,
     {
-        'red' : 17,
-        'green' : 27,
-        'blue' : 22
+        "red" : 17,
+        "green" : 27,
+        "blue" : 22
     }
 )
 
