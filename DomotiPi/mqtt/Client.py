@@ -31,7 +31,7 @@ class Client:
         try:
             self.setClient(self.connect())
         except Exception as e:
-            e.add_note('Unable to connect to the MQTT broker.')
+            e.add_note("Unable to connect to the MQTT broker.")
             raise
 
         pass
@@ -85,11 +85,11 @@ class Client:
         client = paho.mqtt.client.Client()
         client.username_pw_set(
             self.getConfig()["client"]["username"],
-            self.getConfig()["client"]["password"]
+            self.getConfig()["client"]["password"],
         )
         client.connect(
             self.getConfig()["host"]["hostname"],
-            self.getConfig()["host"]["port"]
+            self.getConfig()["host"]["port"],
         )
 
         return client
@@ -185,7 +185,6 @@ class Client:
         )
 
         publisher.loop_stop()
-
 
     def loop(self):
         """
