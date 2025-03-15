@@ -1,6 +1,6 @@
 DomotiPi was developed on:
 
-Python 3.12
+Python 3.13
 
 Has the following dependencies (other version might work, but are untested)
     Configuration
@@ -14,3 +14,6 @@ Has the following dependencies (other version might work, but are untested)
     MQTT
     * paho-mqtt 2.1.0
 
+Development:
+Formatting with:
+    * ruff 0.11.0
