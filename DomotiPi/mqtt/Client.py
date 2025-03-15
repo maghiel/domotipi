@@ -11,8 +11,6 @@ class Client:
     Simple MQTT client utilizing Paho's.
 
     Instead of extending mqtt classes new instances are made.
-
-    TODO: lot of rename refactoring; client is used way too much
     """
 
     _config: dict
@@ -29,10 +27,12 @@ class Client:
         cfg = Config()
         self.setConfig(cfg.getValue("mqtt"))
 
-        # TODO: try throw catch
-
         # Instantiate and connect client
-        self.setClient(self.connect())
+        try:
+            self.setClient(self.connect())
+        except Exception as e:
+            e.add_note('Unable to connect to the MQTT broker.')
+            raise
 
         pass
 
@@ -131,6 +131,8 @@ class Client:
             """
             MQTT hook on receiving message/payload
 
+            :param self:
+            :param userdata:
             :param message:
             :raises:        NotImplementedError
             """
