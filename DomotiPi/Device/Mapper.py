@@ -81,21 +81,21 @@ class Mapper:
         # Create list of attributes from config
         param = []
         for attr in deviceCfg.items():
-            if attr[0] == "type":   # Skip type, never an attribute
-                continue
-            if attr[0] == "gpio":
-                # Get pins list from gpio
-                param.append(attr[1].get('pins'))
-                continue
-            if attr[0] == "service":
-                # Instantiate service class
-                path = deviceType.split('.')
+            match attr[0]:
+                case "type": # Skip type, never an attribute
+                    continue
+                case "gpio": # Get pins list from gpio
+                    param.append(attr[1].get('pins'))
+                    continue
+                case "service":
+                    # Instantiate service class
+                    path = deviceType.split('.')
 
-                serviceModule = importlib.import_module(f"DomotiPi.Device.{path[0]}.{path[1]}.Service.{attr[1]}")
-                serviceClass_ = getattr(serviceModule, attr[1])
-                param.append(serviceClass_())
-                continue
-
-            param.append(attr[1])   # In all other cases append the attribute
+                    serviceModule = importlib.import_module(f"DomotiPi.Device.{path[0]}.{path[1]}.Service.{attr[1]}")
+                    serviceClass_ = getattr(serviceModule, attr[1])
+                    param.append(serviceClass_())
+                    continue
+                case _: # In all other cases append the attribute
+                    param.append(attr[1])
 
         return deviceClass(*param)
