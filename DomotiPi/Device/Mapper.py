@@ -42,24 +42,53 @@ class Mapper:
         """
         self._config = config
 
-    def get(self, deviceId: any):
+    def get(self, deviceId: any) -> DeviceAbstract:
         """
         Get populated Device from Config by id
 
         :param deviceId:
         :type deviceId: any
+        :raises: DeviceNotFoundError
         :return:
         :rtype: DeviceAbstract
+        """
+        device = self._getRaw(deviceId)
+
+        if not device:
+            raise DeviceNotFoundError(f'No device has been configured with id: {deviceId}')
+
+        return self._populate(device)
+
+    def _getRaw(self, deviceId: any) -> dict:
+        """
+        Return device configuration by id.
+
+        :param deviceId:    DeviceId, typically an integer. Pass 'default' to get default settings.
+        :type deviceId:     any
+        :return:
+        :rtype:             dict
         """
         cfg = self._getConfig()
         devices = dict(cfg.getValue('devices'))
 
         device = devices.get(deviceId)
 
-        if not device:
-            raise DeviceNotFoundError(f'No device has been configured with id: {deviceId}')
+        return device
 
-        return self._populate(device)
+    def _getDefaultAttributes(self) -> dict[any]:
+        """
+        Return dict with default device attributes
+
+        :raises: DeviceNotFoundError
+        :return:
+        :rtype: dict[any]
+        """
+        defaults = self._getRaw('default')
+
+        if not defaults:
+            raise DeviceNotFoundError("Default device configuration not found!")
+
+        return defaults
 
     def _populate(self, deviceCfg: dict) -> DeviceAbstract:
         """
@@ -78,24 +107,64 @@ class Mapper:
 
         deviceClass = getattr(module, class_)
 
-        # Create list of attributes from config
-        param = []
-        for attr in deviceCfg.items():
-            match attr[0]:
-                case "type": # Skip type, never an attribute
-                    continue
-                case "gpio": # Get pins list from gpio
-                    param.append(attr[1].get('pins'))
-                    continue
-                case "service":
-                    # Instantiate service class
-                    path = deviceType.split('.')
+        # Fetch attributes from config and populate with default values for unset.
+        param = deviceCfg
+        defaults = self._getDefaultAttributes()
+        for default in defaults.items():
+            param.setdefault(default[0], default[1])
 
-                    serviceModule = importlib.import_module(f"DomotiPi.Device.{path[0]}.{path[1]}.Service.{attr[1]}")
-                    serviceClass_ = getattr(serviceModule, attr[1])
-                    param.append(serviceClass_())
-                    continue
-                case _: # In all other cases append the attribute
-                    param.append(attr[1])
+        # Magic on some attributes
+        if "type" in param:     # Skip type, never an attribute
+            param.pop("type")
+        if "service" in param:  # Set Service layer
+            if not param.get("service") or param.get("service") is None:
+                param.pop("service")
 
-        return deviceClass(*param)
+            # Instantiate service class
+            path = deviceType.split('.')
+
+            serviceModule = importlib.import_module(f"DomotiPi.Device.{path[0]}.{path[1]}.Service.{param.get("service")}")
+            serviceClass_ = getattr(serviceModule, param.get("service"))
+
+            param.update({"service": serviceClass_()})
+        if "gpio" in param:    # Parse GPIO
+            # Replace gpio by its child pins
+            param["pins"] = param.get("gpio").get("pins")
+            param.pop("gpio")
+
+        # CamelCase All Keys
+        newParam = param.copy()
+        for key in param:
+            camelKey = self.__toCamel(key)
+            if camelKey != key:
+                newParam[camelKey] = param[key]
+                newParam.pop(key)
+
+        return deviceClass(**newParam)
+
+    def __toCamel(self, word: str) -> str:
+        """
+        Convert python preferred lower_case to camelCase
+
+        :param word:
+        :type word: str
+        :return:
+        :rtype: str
+        """
+        if not word.find("_"):
+            return word
+
+        words = word.split("_")
+
+        camel = ""
+        i = 0
+
+        for word in words:
+            if i == 0:
+                camel += word
+                i += 1
+                continue
+
+            camel += word[0].upper() + word[1:]
+
+        return camel

@@ -29,6 +29,8 @@ class RGBLED(Light):
         description: str,
         service: IsDeviceServiceInterface,
         pins: dict,
+        *args,
+        **kargs,
     ):
         """
         Constructor
@@ -50,7 +52,7 @@ class RGBLED(Light):
         :rtype:             self
         """
         # Init parent
-        super().__init__(id, name, description, service)
+        super().__init__(id, name, description, service, args, kargs)
 
         """
         Declare pin-numbers for red, green and blue

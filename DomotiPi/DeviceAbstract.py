@@ -1,4 +1,7 @@
 from abc import ABC, abstractmethod
+
+import validators
+
 from DomotiPi.Device.IsDeviceServiceInterface import IsDeviceServiceInterface
 
 
@@ -12,6 +15,13 @@ class DeviceAbstract(ABC):
     _id: int
     _name: str
     _description: str
+
+    _manufacturer: str
+    _model: str
+    _hardwareVersion: str
+    _softwareVersion: str
+    _supportURL: str
+    _suggestedArea : str
 
     _service: IsDeviceServiceInterface
 
@@ -88,12 +98,154 @@ class DeviceAbstract(ABC):
         return self.getDescription()
 
     @abstractmethod
+    def getManufacturer(self) -> str:
+        """
+        Return Manufacturer name
+
+        :return:
+        :rtype str:
+        """
+        return self._manufacturer
+
+    @abstractmethod
+    def setManufacturer(self, manufacturer: str) -> str:
+        """
+        Set manufacturer name
+
+        :param manufacturer:
+        :type manufacturer: str
+        :return:
+        :rtype: str
+        """
+        self._manufacturer = manufacturer
+        return self.getManufacturer()
+
+    @abstractmethod
+    def getModel(self) -> str:
+        """
+        Return model name
+
+        :return:
+        :rtype str:
+        """
+        return self._model
+
+    @abstractmethod
+    def setModel(self, model: str) -> str:
+        """
+        Set model name
+
+        :param model:
+        :type model: str
+        :return:
+        :rtype: str
+        """
+        self._model = model
+        return self.getModel()
+
+    @abstractmethod
+    def getHardwareVersion(self) -> str:
+        """
+        Return hardware version
+
+        :return:
+        :rtype: str
+        """
+        return self._hardwareVersion
+
+    @abstractmethod
+    def setHardwareVersion(self, version: str) -> str:
+        """
+        Set hardware version
+
+        :param version:
+        :type version: str
+        :return:
+        :rtype: str
+        """
+        self._hardwareVersion = version
+        return self.getHardwareVersion()
+
+    @abstractmethod
+    def getSoftwareVersion(self) -> str:
+        """
+        Return software version
+
+        :return:
+        :rtype: str
+        """
+        return self._softwareVersion
+
+    @abstractmethod
+    def setSoftwareVersion(self, version: str) -> str:
+        """
+        Set software version
+
+        :param version:
+        :type version: str
+        :return:
+        :rtype: str
+        """
+        self._softwareVersion = version
+        return self.getSoftwareVersion()
+
+    @abstractmethod
+    def getSupportURL(self) -> str:
+        """
+        Return the support URL for the device.
+
+        :return:
+        :rtype: str
+        """
+        return self._supportURL
+
+    @abstractmethod
+    def setSupportURL(self, url: str):
+        """
+        Set the support URL for the device
+
+        :param url:
+        :type url: str
+        :raises: ValueError
+        :return:
+        :rtype: str
+        """
+        if url != "" and not validators.url(url):
+            raise ValueError(f'Invalid URL: {url}')
+
+        self._supportURL = url
+        return self.getSupportURL()
+
+    @abstractmethod
+    def getSuggestedArea(self) -> str:
+        """
+        Return suggested area for the device.
+
+        :return:
+        :rtype: str
+        """
+        return self._suggestedArea
+
+    @abstractmethod
+    def setSuggestedArea(self, area: str) -> str:
+        """
+        Set suggested area for the device.
+        For example: home, living room, kitchen.
+
+        :param area:
+        :type area: str
+        :return:
+        :rtype: str
+        """
+        self._suggestedArea = area
+        return self.getSuggestedArea()
+
+    @abstractmethod
     def getService(self) -> IsDeviceServiceInterface:
         """
         Return device service-layer (for example MQTT, REST, etc.)
 
         TODO: abstraction layer for device services
-        TODO: stricter type casting
 
         :return:
         :rtype: IsDeviceServiceInterface
@@ -101,7 +253,7 @@ class DeviceAbstract(ABC):
         return self._service
 
     @abstractmethod
-    def setService(self, service: IsDeviceServiceInterface) -> IsDeviceServiceInterface:
+    def setService(self, service: IsDeviceServiceInterface or None) -> IsDeviceServiceInterface or None:
         """
         Set device service-layer.
         For example MQTT, REST, etc.
@@ -109,8 +261,12 @@ class DeviceAbstract(ABC):
         :param service:
         :type service:  IsDeviceServiceInterface
         :return:
-        :rtype:         IsDeviceServiceInterface
+        :rtype:         IsDeviceServiceInterface or None
         """
+        if service is None:
+            self._service = None
+            return self.getService()
+
         service.factory(self)
 
         self._service = service
