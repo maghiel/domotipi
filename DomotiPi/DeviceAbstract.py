@@ -23,7 +23,7 @@ class DeviceAbstract(ABC):
     _supportURL: str
     _suggestedArea : str
 
-    _service: IsDeviceServiceInterface
+    _service: IsDeviceServiceInterface | None
 
     @abstractmethod
     def getId(self) -> int:
@@ -241,29 +241,29 @@ class DeviceAbstract(ABC):
         return self.getSuggestedArea()
 
     @abstractmethod
-    def getService(self) -> IsDeviceServiceInterface:
+    def getService(self) -> IsDeviceServiceInterface | None:
         """
         Return device service-layer (for example MQTT, REST, etc.)
 
         TODO: abstraction layer for device services
 
         :return:
-        :rtype: IsDeviceServiceInterface
+        :rtype: IsDeviceServiceInterface | None
         """
         return self._service
 
     @abstractmethod
     def setService(
-        self, service: IsDeviceServiceInterface or None
-    ) -> IsDeviceServiceInterface or None:
+        self, service: IsDeviceServiceInterface | None
+    ) -> IsDeviceServiceInterface | None:
         """
         Set device service-layer.
         For example MQTT, REST, etc.
 
         :param service:
-        :type service:  IsDeviceServiceInterface
+        :type service:  IsDeviceServiceInterface | None
         :return:
-        :rtype:         IsDeviceServiceInterface or None
+        :rtype:         IsDeviceServiceInterface | None
         """
         if service is None:
             self._service = None
