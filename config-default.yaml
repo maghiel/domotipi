@@ -35,7 +35,7 @@ mqtt:
 
 
 #######################################################################################################################
-# Device configuration. Not implemented yet!
+# Device configuration
 #######################################################################################################################
 # All devices can optionally be configured here instead of manual instantiation with the required arguments.
 # Default settings can be overridden on a per-device level.
@@ -44,15 +44,15 @@ mqtt:
 # NOTE: device setup through config files will possibly become mandatory
 devices:
   default:
-    default_manufacturer: DomotiPi Devices GPLv3
-    default_model: DomotiPi Device
+    manufacturer: DomotiPi Devices GPLv3
+    model: DomotiPi Device
     hardware_version: 0.1.0.0-prealpha.2  # Misuse DomotiPi version as hardware version
     software_version: 0.1.0.0-prealpha.2
-    support_url: https://github.com/maghiel/domotipi
+    support_URL: https://github.com/maghiel/domotipi
     suggested_area: living_room
   1:
     id: 1
-    type: light
+    type: Light.Light
     name: Light
     description: Base Light class
     service: None
