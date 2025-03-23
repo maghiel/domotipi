@@ -20,7 +20,7 @@
   * Abstracting the mqtt client layer.
 
 * Devices
-  * Implement ConfigMapper for devices
+  * ~~Implement ConfigMapper for devices~~
   * ~~Backport color and brightness changes in Hoogvliet back to Action~~ 
   * Services
     * ~~Refactor Service injection.~~ 
@@ -32,3 +32,4 @@
 
 * Error handling
   * Implement custom Exception classes
+  * Separate Exception directory
