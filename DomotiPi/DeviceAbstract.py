@@ -253,7 +253,9 @@ class DeviceAbstract(ABC):
         return self._service
 
     @abstractmethod
-    def setService(self, service: IsDeviceServiceInterface or None) -> IsDeviceServiceInterface or None:
+    def setService(
+        self, service: IsDeviceServiceInterface or None
+    ) -> IsDeviceServiceInterface or None:
         """
         Set device service-layer.
         For example MQTT, REST, etc.

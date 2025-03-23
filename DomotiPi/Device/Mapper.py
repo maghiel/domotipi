@@ -99,11 +99,11 @@ class Mapper:
         :return:
         :rtype: DeviceAbstract
         """
-        deviceType = str(deviceCfg.get('type'))
+        deviceType = str(deviceCfg.get("type"))
 
         # Try to import the device by device_type set in config
         module = importlib.import_module(f"DomotiPi.Device.{deviceType}")
-        class_ = deviceType.split('.')[-1]
+        class_ = deviceType.split(".")[-1]
 
         deviceClass = getattr(module, class_)
 
@@ -121,13 +121,15 @@ class Mapper:
                 param.pop("service")
 
             # Instantiate service class
-            path = deviceType.split('.')
+            path = deviceType.split(".")
 
-            serviceModule = importlib.import_module(f"DomotiPi.Device.{path[0]}.{path[1]}.Service.{param.get("service")}")
+            serviceModule = importlib.import_module(
+                f"DomotiPi.Device.{path[0]}.{path[1]}.Service.{param.get('service')}"
+            )
             serviceClass_ = getattr(serviceModule, param.get("service"))
 
             param.update({"service": serviceClass_()})
-        if "gpio" in param:    # Parse GPIO
+        if "gpio" in param:  # Parse GPIO
             # Replace gpio by its child pins
             param["pins"] = param.get("gpio").get("pins")
             param.pop("gpio")

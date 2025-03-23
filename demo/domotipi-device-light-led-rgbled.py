@@ -19,11 +19,7 @@ light = RGBLED(
     "Hoogvliet Abstraction",
     "Hoogvliet Abstraction Test",
     service,
-    {
-        "red" : 17,
-        "green" : 27,
-        "blue" : 22
-    }
+    {"red": 17, "green": 27, "blue": 22},
 )
 
 try:
