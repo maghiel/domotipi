@@ -59,14 +59,14 @@ class Mapper:
 
         return self._populate(device)
 
-    def _getRaw(self, deviceId: any) -> dict:
+    def _getRaw(self, deviceId: any) -> dict | None:
         """
         Return device configuration by id.
 
         :param deviceId:    DeviceId, typically an integer. Pass 'default' to get default settings.
         :type deviceId:     any
         :return:
-        :rtype:             dict
+        :rtype:             dict | None
         """
         cfg = self._getConfig()
         devices = dict(cfg.getValue('devices'))
@@ -75,13 +75,13 @@ class Mapper:
 
         return device
 
-    def _getDefaultAttributes(self) -> dict[any]:
+    def _getDefaultAttributes(self) -> dict:
         """
         Return dict with default device attributes
 
         :raises: DeviceNotFoundError
         :return:
-        :rtype: dict[any]
+        :rtype: dict
         """
         defaults = self._getRaw('default')
 
@@ -144,7 +144,8 @@ class Mapper:
 
         return deviceClass(**newParam)
 
-    def __toCamel(self, word: str) -> str:
+    @staticmethod
+    def __toCamel(word: str) -> str:
         """
         Convert python preferred lower_case to camelCase
 
