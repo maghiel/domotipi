@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
 
+import DomotiPi.mqtt.Client
+
 
 class IsDeviceServiceInterface(ABC):
     """
@@ -16,4 +18,8 @@ class IsDeviceServiceInterface(ABC):
 
     @abstractmethod
     def connect(self):
+        pass
+
+    @abstractmethod
+    def getClient(self) -> DomotiPi.mqtt.Client.Client:
         pass
