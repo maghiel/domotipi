@@ -56,6 +56,7 @@ devices:
     name: Light
     description: Base Light class
     service: None
+    manufacturer: Your mom
   5:
     id: 9999
     type: Light.LED.RGBLED

@@ -29,6 +29,7 @@
         * ~~engage~~
     * ~~Implement (misuse) IsDeviceService interface (abstract in python)~~
     * Implement Controllers
+    * ~~Implement extra fields in mqtt~~
 
 * Error handling
   * Implement custom Exception classes

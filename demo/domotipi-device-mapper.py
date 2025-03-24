@@ -13,3 +13,10 @@ device = mapper.get(5)
 print(f"type: {type(device)}")
 print(device)
 print(device.getHardwareVersion())
+
+try:
+    device.getService().connect()
+except KeyboardInterrupt:
+    device.off()
+    device.getService().getClient().disconnect()
+    demo_init.cleanUp()
