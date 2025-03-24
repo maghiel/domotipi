@@ -175,6 +175,9 @@ class Mqtt(IsDeviceServiceInterface):
         """
         Configure MQTT client for discovery
 
+        TODO: hardcoded device properties should be configurable
+        TODO: differentiate device registry, origin, etc.
+
         :param topic:           Home/base topic to subscribe/announce too
         :type topic:            str
         :param configTopic:     Configuration/discovery topic
@@ -182,12 +185,21 @@ class Mqtt(IsDeviceServiceInterface):
         :return:                None
         """
         payload = {
+            # Topics and settings
             "~": topic,
-            "name": self.getDevice().getName(),
-            "uniq_id": self.objectId + "-test",  # TODO: remove test suffix from uniq_id
             "cmd_t": "~/set",
             "stat_t": "~/state",
             "schema": "json",
+            # Device properties
+            "manufacturer": self.getDevice().getManufacturer(),
+            "model": self.getDevice().getModel(),
+            "hw_version": self.getDevice().getHardwareVersion(),
+            "sw_version": self.getDevice().getSoftwareVersion(),
+            "support_url": self.getDevice().getSupportURL(),
+            "suggested_area": self.getDevice().getSuggestedArea(),
+            # Device settings
+            "name": self.getDevice().getName(),
+            "uniq_id": self.objectId + "-test",  # TODO: remove test suffix from uniq_id
             "brightness": True,
             "color": (
                 "r",
