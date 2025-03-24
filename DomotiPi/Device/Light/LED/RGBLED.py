@@ -7,11 +7,8 @@ from DomotiPi.Device.Light.Light import Light
 class RGBLED(Light):
     """
     Class RGBLED. Extends Light.
-    SoundLogic RGB LED Strip sold at Hoogvliet stores.
 
     This class will talk to a dumb RGB LED strip using gpiozero.RGBLED
-
-    TODO: implement gpiozero.RGBLED methods
     """
 
     __pinRed: int

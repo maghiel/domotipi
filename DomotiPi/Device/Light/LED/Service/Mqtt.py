@@ -199,7 +199,7 @@ class Mqtt(IsDeviceServiceInterface):
             "suggested_area": self.getDevice().getSuggestedArea(),
             # Device settings
             "name": self.getDevice().getName(),
-            "uniq_id": self.objectId + "-test",  # TODO: remove test suffix from uniq_id
+            "uniq_id": self.objectId,
             "brightness": True,
             "color": (
                 "r",
