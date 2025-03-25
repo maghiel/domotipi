@@ -10,6 +10,9 @@
 
 ~~* Upgrade to minimum python 3.10~~
 
+* General
+  * Security!
+  
 * Dependencies
   * Easy requirements setup
 
@@ -19,6 +22,9 @@
 * MQTT
   * Abstracting the mqtt client layer.
 
+* Documentation
+  * Switch to another type of docblock which support :param
+  
 * Devices
   * ~~Implement ConfigMapper for devices~~
   * ~~Backport color and brightness changes in Hoogvliet back to Action~~ 
