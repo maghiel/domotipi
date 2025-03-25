@@ -1,4 +1,4 @@
-import paho.mqtt.client
+from paho.mqtt.client import Client as mqttClient
 
 import json
 
@@ -14,8 +14,7 @@ class Client:
     """
 
     _config: dict
-
-    _client: paho.mqtt.client.Client
+    _client: mqttClient
 
     def __init__(self):
         """
@@ -57,32 +56,32 @@ class Client:
         self._config = config
         return self.getConfig()
 
-    def getClient(self) -> paho.mqtt.client.Client:
+    def getClient(self) -> mqttClient:
         """
         Return paho MQTT client
 
         :return:
-        :rtype: paho.mqtt.client.Client
+        :rtype: mqttClient
         """
         return self._client
 
-    def setClient(self, client: paho.mqtt.client.Client):
+    def setClient(self, client: mqttClient):
         """
         Set paho MQTT client
 
         :param client:
-        :type client:   paho.mqtt.client.Client
+        :type client:   mqttClient
         :return:
         """
         self._client = client
 
-    def connect(self) -> paho.mqtt.client.Client:
+    def connect(self) -> mqttClient:
         """
         Connect client to broker
 
-        :return: paho.mqtt.client.Client
+        :return: mqttClient
         """
-        client = paho.mqtt.client.Client()
+        client = mqttClient()
         client.username_pw_set(
             self.getConfig()["client"]["username"],
             self.getConfig()["client"]["password"],
@@ -127,14 +126,15 @@ class Client:
         :return:
         """
 
-        def onMessage(self, userdata, message):
+        def onMessage(clientInstance: mqttClient, userdata, message):
             """
             MQTT hook on receiving message/payload
 
-            :param self:
-            :param userdata:
-            :param message:
-            :raises:        NotImplementedError
+            :param clientInstance:  Not used, ctlObject calls our instance.
+            :type clientInstance:   mqttClient
+            :param userdata:        Not implemented yet.
+            :param message:         Mqtt message
+            :raises:                NotImplementedError
             """
             # Decode mqtt payload to str and convert to dict
             msgdec = json.loads(message.payload.decode("utf-8"))
