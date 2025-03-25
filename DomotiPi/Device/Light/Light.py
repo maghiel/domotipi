@@ -1,10 +1,10 @@
 from DomotiPi.Device.IsDeviceServiceInterface import IsDeviceServiceInterface
-from DomotiPi.DeviceAbstract import DeviceAbstract
+from DomotiPi.Device.Abstract import Abstract
 
 
-class Light(DeviceAbstract):
+class Light(Abstract):
     """
-    Class Light, Extends abstract :class:`DeviceAbstract`
+    Class Light, Extends abstract :class:`Abstract`
     Base class for light emitting devices (see what I did there?)
     """
 

@@ -5,9 +5,9 @@ import validators
 from DomotiPi.Device.IsDeviceServiceInterface import IsDeviceServiceInterface
 
 
-class DeviceAbstract(ABC):
+class Abstract(ABC):
     """
-    Abstract class DeviceAbstract. Extends abc.ABC
+    Abstract class Abstract. Extends abc.ABC
     Note: it goes against my nature to have implementations in abstract layers, but I guess that is what
     Python likes.
     """

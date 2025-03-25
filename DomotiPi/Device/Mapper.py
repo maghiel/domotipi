@@ -2,7 +2,7 @@ import importlib
 
 from DomotiPi.Config import Config
 from DomotiPi.Device.DeviceNotFoundErrror import DeviceNotFoundError
-from DomotiPi.DeviceAbstract import DeviceAbstract
+from DomotiPi.Device.Abstract import Abstract
 
 
 class Mapper:
@@ -42,7 +42,7 @@ class Mapper:
         """
         self._config = config
 
-    def get(self, deviceId: any) -> DeviceAbstract:
+    def get(self, deviceId: any) -> Abstract:
         """
         Get populated Device from Config by id
 
@@ -50,7 +50,7 @@ class Mapper:
         :type deviceId: any
         :raises: DeviceNotFoundError
         :return:
-        :rtype: DeviceAbstract
+        :rtype: Abstract
         """
         device = self._getRaw(deviceId)
 
@@ -90,14 +90,14 @@ class Mapper:
 
         return defaults
 
-    def _populate(self, deviceCfg: dict) -> DeviceAbstract:
+    def _populate(self, deviceCfg: dict) -> Abstract:
         """
         Populate and instantiate Device with given dictionary.
 
         :param deviceCfg:
         :type deviceCfg: dict
         :return:
-        :rtype: DeviceAbstract
+        :rtype: Abstract
         """
         deviceType = str(deviceCfg.get("type"))
 
