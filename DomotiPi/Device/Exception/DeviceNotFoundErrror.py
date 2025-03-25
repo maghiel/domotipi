@@ -1,5 +1,7 @@
-class DeviceNotFoundError(Exception):
+from DomotiPi.Exception.DomotiPiError import DomotiPiError
+
+class DeviceNotFoundError(DomotiPiError):
     """
     DeviceNotFoundError
-    Extends Exception
+    Extends DomotiPiError
     """
