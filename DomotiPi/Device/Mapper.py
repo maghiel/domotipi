@@ -1,7 +1,7 @@
 import importlib
 
 from DomotiPi.Config import Config
-from DomotiPi.Device.DeviceNotFoundErrror import DeviceNotFoundError
+from DomotiPi.Device.Exception.DeviceNotFoundErrror import DeviceNotFoundError
 from DomotiPi.Device.Abstract import Abstract
 
 
