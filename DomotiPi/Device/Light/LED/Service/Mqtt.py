@@ -71,7 +71,8 @@ class Mqtt(IsDeviceServiceInterface):
 
         prefix = f"{self.getTopicPrefix()}/light"
 
-        # TODO: all topics can be based of ~
+        # Define topics. Alternatively all topics could be based of home(~),
+        # but for readability I'm leaving it like this
         self.topic = {
             # Base
             "home": f"{prefix}/{self.objectId}",
@@ -240,7 +241,6 @@ class Mqtt(IsDeviceServiceInterface):
         :return:
         :rtype:             bool
         :raises:            ValueError
-        TODO: Refactor state to command
         """
         # state ON|OFF, switch LED on|off and publish single message to broker to report back
         if "state" in state.keys():
