@@ -324,11 +324,7 @@ class Mqtt(IsDeviceServiceInterface):
         :rtype:                 bool
         :raises:                LightValueError
         """
-        if (
-            not "r" in colorPayload.keys()
-            or not "g" in colorPayload.keys()
-            or not "b" in colorPayload.keys()
-        ):
+        if (('r', 'g', 'b') - colorPayload.keys()).difference():
             raise LightValueError("Invalid colorPayload, should be {r,g,b}.")
 
         self.getDevice().setColor(
