@@ -1,6 +1,13 @@
+from DomotiPi.Device.Exception.DeviceTypeError import DeviceTypeError
+from DomotiPi.Device.Exception.InvalidMQTTStateError import InvalidMQTTStateError
+from DomotiPi.Device.Exception.LightCommandError import LightCommandError
+from DomotiPi.Device.Exception.LightValueError import LightValueError
+
 from DomotiPi.Device.IsDeviceServiceInterface import IsDeviceServiceInterface
 from DomotiPi.Device.Light.LED.RGBLED import RGBLED
+
 from DomotiPi.mqtt.Client import Client
+
 from DomotiPi.Config import Config
 
 
@@ -11,7 +18,6 @@ class Mqtt(IsDeviceServiceInterface):
     Mqtt service layer for LED.
 
     TODO: Save states on disconnect/remember states
-    TODO: Extend base exception classes
 
     client      DomotiPi.mqtt.Client    MQTT client
     objectId    string                  Unique object ID based on name and ID of parent
@@ -90,11 +96,11 @@ class Mqtt(IsDeviceServiceInterface):
         """
         Configure MQTT for discovery and subscribe to command topic
 
-        :raises:    ReferenceError
+        :raises:    DeviceTypeError
         :return:
         """
         if not isinstance(self.getDevice(), RGBLED):
-            raise ReferenceError(
+            raise DeviceTypeError(
                 "Device not set. Was factory called before attempting to use the service?"
             )
 
@@ -240,7 +246,7 @@ class Mqtt(IsDeviceServiceInterface):
         :type state:        dict
         :return:
         :rtype:             bool
-        :raises:            ValueError
+        :raises:            InvalidMQTTStateError
         """
         # state ON|OFF, switch LED on|off and publish single message to broker to report back
         if "state" in state.keys():
@@ -263,7 +269,7 @@ class Mqtt(IsDeviceServiceInterface):
                         )
                 case _:
                     self.getDevice().off()
-                    raise ValueError(
+                    raise InvalidMQTTStateError(
                         f"State must be either ON or OFF, received {state.get('state')}"
                     )
 
@@ -299,10 +305,10 @@ class Mqtt(IsDeviceServiceInterface):
         :type payload:      int
         :return:
         :rtype:             bool
-        :raises:            ValueError
+        :raises:            LightValueError
         """
         if payload > 255 or payload < 0:
-            raise ValueError(f"Brightness expected 0-255, {payload} received instead.")
+            raise LightValueError(f"Brightness expected 0-255, {payload} received instead.")
         self.getDevice().setBrightness(payload)
 
         return True
@@ -316,14 +322,14 @@ class Mqtt(IsDeviceServiceInterface):
         :type colorPayload:     dict
         :return:
         :rtype:                 bool
-        :raises:                ValueError
+        :raises:                LightValueError
         """
         if (
             not "r" in colorPayload.keys()
             or not "g" in colorPayload.keys()
             or not "b" in colorPayload.keys()
         ):
-            raise ValueError("Invalid colorPayload, should be {r,g,b}.")
+            raise LightValueError("Invalid colorPayload, should be {r,g,b}.")
 
         self.getDevice().setColor(
             colorPayload.get("r"),
@@ -340,7 +346,7 @@ class Mqtt(IsDeviceServiceInterface):
         :param effect:  The effect to use
         :type effect:   str
         :return:
-        :raises:        ValueError
+        :raises:        LightCommandError
         """
         match effect:
             case "normal":
@@ -350,6 +356,6 @@ class Mqtt(IsDeviceServiceInterface):
             case "pulse":
                 self.getDevice().pulse()
             case _:
-                raise ValueError(f"Effect {effect} not supported by device.")
+                raise LightCommandError(f"Effect {effect} not supported by device.")
 
         return True
