@@ -1,5 +1,6 @@
 from gpiozero import RGBLED as RGBLEDIO
 
+from DomotiPi.Device.Exception.LightValueError import LightValueError
 from DomotiPi.Device.IsDeviceServiceInterface import IsDeviceServiceInterface
 from DomotiPi.Device.Light.Light import Light
 
@@ -47,6 +48,7 @@ class RGBLED(Light):
         :type pins:         dict
         :return:
         :rtype:             self
+        :raises:            LightValueError
         """
         # Init parent
         super().__init__(id, name, description, service, args, kargs)
@@ -56,7 +58,9 @@ class RGBLED(Light):
 
         NOTE: gpiozero uses GPIO pin-numbers instead of physical pin-numbers            
         """
-        # TODO: error handling on pins argument
+        if ("red", "green", "blue") - pins.keys():
+            raise LightValueError(f'Invalid keys given for rgb pins. Expected red,green,blue, given {pins.keys()}')
+
         self.__pinRed = pins.get("red")
         self.__pinGreen = pins.get("green")
         self.__pinBlue = pins.get("blue")
@@ -92,7 +96,7 @@ class RGBLED(Light):
         :param green:           Green
         :param blue:            Blue
         :param brightness:      Brightness
-        :raises:                ValueError
+        :raises:                LightValueError
         """
         args = locals()
         for arg in args.items():
@@ -100,7 +104,7 @@ class RGBLED(Light):
                 continue
 
             if arg[1] < 0 or arg[1] > 1:
-                raise ValueError("RGB values must be between 0 and 1")
+                raise LightValueError("RGB values must be between 0 and 1")
 
         self._colorValue = [
             red,            # Red
@@ -175,10 +179,6 @@ class RGBLED(Light):
             # If rgb is float assume rgb 0-1
             if type(rgb) == float:
                 return rgb
-
-            # Must already be rgb 0-1 if value is between 0 and 1
-            #            if 1 > rgb > 0:
-            #                return float(rgb)
 
             # Do not round the value!
             return float(rgb / 255)
