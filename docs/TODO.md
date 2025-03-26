@@ -23,7 +23,7 @@
   * Abstracting the mqtt client layer.
 
 * Documentation
-  * Switch to another type of docblock which support :param
+  * Switch to another type of docblock which complies more with my preferences.
   
 * Devices
   * ~~Implement ConfigMapper for devices~~
@@ -36,6 +36,7 @@
     * ~~Implement (misuse) IsDeviceService interface (abstract in python)~~
     * Implement Controllers
     * ~~Implement extra fields in mqtt~~
+    * Implement active_high and pwm properties
 
 * Error handling
   * Implement custom Exception classes
