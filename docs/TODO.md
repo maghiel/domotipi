@@ -11,8 +11,9 @@
 ~~* Upgrade to minimum python 3.10~~
 
 * General
-  * Security!
+  * Security! Certs, TLS, etc.
   
+* Implement tests!
 * Dependencies
   * Easy requirements setup
 
@@ -39,5 +40,5 @@
     * Implement active_high and pwm properties
 
 * Error handling
-  * Implement custom Exception classes
-  * Separate Exception directory
+  * ~~Implement custom Exception classes~~
+  * ~~Separate Exception directory~~
