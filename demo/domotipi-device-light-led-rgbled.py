@@ -16,8 +16,8 @@ service = Mqtt()
 
 light = RGBLED(
     5,
-    "Hoogvliet Abstraction",
-    "Hoogvliet Abstraction Test",
+    "MyDevice",
+    "MyDevice Test",
     service,
     {"red": 17, "green": 27, "blue": 22},
 )
