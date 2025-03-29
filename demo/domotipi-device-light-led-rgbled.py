@@ -1,7 +1,6 @@
 """
 DomotiPi Device LED development/demo script
 
-
 """
 
 import demo_init
@@ -21,6 +20,13 @@ light = RGBLED(
     service,
     {"red": 17, "green": 27, "blue": 22},
 )
+
+light.setManufacturer("DomotiPi Devices")
+light.setModel("DomotiPi Device")
+light.setHardwareVersion("")
+light.setSoftwareVersion("")
+light.setSupportURL("")
+light.setSuggestedArea("")
 
 try:
     light.getService().connect()
