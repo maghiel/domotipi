@@ -42,7 +42,16 @@ The most flexible of downloading DomotiPi is using git, as it allows you to swit
 will be lost if you use `config.yaml` instead of the default template as no other information is stored locally 
 (subject to change).
 
-TODO: write instructions
+#### HTTPS
+```bash
+git clone https://github.com/maghiel/domotipi.git
+```
+
+#### SSH
+Prerequisites having a GitHub account configured.
+```bash
+git@github.com:maghiel/domotipi.git
+```
 
 ### Downloading a tarball or zip
 Alternatively just download the latest release.
@@ -91,6 +100,11 @@ Remote control requires `pigpio`, which can be installed in the venv by running:
 pip install -r requirements-remote.txt
 ```
 
+## Run
+To check if all is well, simply try:
+```bash
+python main.py
+```
 
 # Configuration
 A template for configuration is stored in `config-default.yaml`. You can directly modify `config-default.yaml` but it
