@@ -5,8 +5,18 @@
 #######################################################################################################################
 # GPIO settings
 #######################################################################################################################
-pin_factory: pigpio
-pigpio_addr: 127.0.0.1
+# The GPIO settings are configured here.
+#
+# The default factory is lgpio, for use on bare metal.
+#
+# In case you want to run DomotiPi from a control machine thus controlling the device remotely, pigpio can be used.
+# This also requires you to configure more variables, like the host.
+#
+# Probably all factories are supported, but currently only lgpio and pigpio are tested.
+# See: https://gpiozero.readthedocs.io/en/stable/api_pins.html#
+pin_factory: lgpio
+#pin_factory: pigpio
+#pigpio_addr: 127.0.0.1
 
 
 #######################################################################################################################
