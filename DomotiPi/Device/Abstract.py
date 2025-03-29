@@ -274,3 +274,11 @@ class Abstract(ABC):
         self._service = service
 
         return self.getService()
+
+    @abstractmethod
+    def on(self):
+        pass
+
+    @abstractmethod
+    def off(self):
+        pass
