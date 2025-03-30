@@ -50,7 +50,7 @@ git clone https://github.com/maghiel/domotipi.git
 #### SSH
 Prerequisites having a GitHub account configured.
 ```bash
-git@github.com:maghiel/domotipi.git
+git clone git@github.com:maghiel/domotipi.git
 ```
 
 ### Downloading a tarball or zip
@@ -59,8 +59,8 @@ Alternatively just download the latest release.
 ```bash
 mkdir domotipi
 cd domotipi
-wget https://github.com/maghiel/domotipi/archive/refs/tags/v0.1.0.0-prealpha.4.tar.gz
-tar -zxvf v0.1.0.0-prealpha.4.tar.gz
+wget https://github.com/maghiel/domotipi/archive/refs/tags/v0.1.0.0.tar.gz
+tar -zxvf v0.1.0.0.tar.gz
 ```
 
 ## Setup
