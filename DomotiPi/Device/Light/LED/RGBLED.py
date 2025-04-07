@@ -27,6 +27,8 @@ class RGBLED(Light):
         description: str,
         service: IsDeviceServiceInterface,
         pins: dict,
+        activeHigh: bool = False,
+        pwm: bool = True,
         *args,
         **kargs,
     ):
@@ -46,6 +48,10 @@ class RGBLED(Light):
         :type service:      object
         :param pins:        GPIO pin numbers for red, green and blue
         :type pins:         dict
+        :param activeHigh:  Set LOW or HIGH on pins, defaults to LOW
+        :type activeHigh:   bool
+        :param pwm:         Set Pulse Width Modulation to True or False.
+        :type pwm:          bool
         :return:
         :rtype:             self
         :raises:            LightValueError
@@ -75,8 +81,8 @@ class RGBLED(Light):
             self.__pinRed,
             self.__pinGreen,
             self.__pinBlue,
-            active_high=False,
-            pwm=True
+            active_high=activeHigh,
+            pwm=pwm
         )
 
         # Store current color values

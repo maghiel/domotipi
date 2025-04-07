@@ -114,9 +114,11 @@ class Mapper:
             param.setdefault(default[0], default[1])
 
         # Magic on some attributes
-        if "type" in param:     # Skip type, never an attribute
+        # Skip type, never an attribute
+        if "type" in param:
             param.pop("type")
-        if "service" in param:  # Set Service layer
+        # Set Service layer
+        if "service" in param:
             if not param.get("service") or param.get("service") is None:
                 param.pop("service")
 
@@ -129,9 +131,12 @@ class Mapper:
             serviceClass_ = getattr(serviceModule, param.get("service"))
 
             param.update({"service": serviceClass_()})
-        if "gpio" in param:  # Parse GPIO
-            # Replace gpio by its child pins
-            param["pins"] = param.get("gpio").get("pins")
+        # Parse GPIO
+        if "gpio" in param:
+            # Replace gpio by its child properties
+            for k, v in param["gpio"].items():
+                param[k] = v
+
             param.pop("gpio")
 
         # CamelCase All Keys
