@@ -25,7 +25,7 @@ existing home automation.
 
 Take a Pi, Home Assistant, a cheap LED strip and your soldering iron, create a config file or a new class, and done.
 
-Instead of taking the eas path of creating an MQTT device through configuration in Home Assistant, 
+Instead of taking the easy path of creating an MQTT device through configuration in Home Assistant, 
 I want my devices to be automatically discovered and ready to use. Thus, reinventing the wheel. 
 
 # Installation
