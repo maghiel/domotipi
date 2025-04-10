@@ -276,9 +276,12 @@ class Mqtt(IsDeviceServiceInterface):
                     if not self.getDevice().isLit():
                         # Turn on LEDs and publish ON state
                         self.getDevice().on()
+                        # Call other Light properties in order to recover state before OFF
+                        # but not after a disconnect as it would destroy the retained messages.
+                        if self._getMqttState().getState() is not None:
+                            self.commandLight(self._getMqttState().getAsDict())
+
                         self._getMqttState().setState("ON")
-                        # Call other Light properties in order to recover state before off
-                        self.commandLight(self._getMqttState().getAsDict())
                 case "OFF":
                     if self.getDevice().isLit():
                         # Turn off LEDs, set OFF state and clear all effects
@@ -297,7 +300,8 @@ class Mqtt(IsDeviceServiceInterface):
         # Publish the state back to the broker
         self.getClient().publishSingle(
             self.topic['state'],
-            self._getMqttState().getAsDict()
+            self._getMqttState().getAsDict(),
+            True
         )
 
         return True
