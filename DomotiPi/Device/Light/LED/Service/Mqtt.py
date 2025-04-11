@@ -275,7 +275,11 @@ class Mqtt(IsDeviceServiceInterface):
                 case "ON":
                     if not self.getDevice().isLit():
                         # Turn on LEDs and publish ON state
-                        self.getDevice().on()
+                        if self._getMqttState().getColor() is not None:
+                            self.color(self._getMqttState().getColor())
+                        else:
+                            self.getDevice().on()
+
                         # Call other Light properties in order to recover state before OFF
                         # but not after a disconnect as it would destroy the retained messages.
                         if self._getMqttState().getState() is not None:

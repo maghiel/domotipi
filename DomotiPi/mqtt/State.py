@@ -5,6 +5,7 @@ class State:
     """
     Class State.
     Instance holding MQTT state properties during session.
+    This class should clearly be abstracted and extended ;)
 
     TODO: Quick&dirty
     """
