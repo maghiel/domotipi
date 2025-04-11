@@ -161,7 +161,7 @@ class Client:
 
         pass
 
-    def publishSingle(self, topic: str, message: dict):
+    def publishSingle(self, topic: str, message: dict, retain: bool = False):
         """
         Publish a single message to the MQTT broker.
 
@@ -174,6 +174,8 @@ class Client:
         :type topic:        str
         :param message:     Message to publish
         :type message:      dict
+        :param retain:      Retain message. Defaults to false
+        :type retain:       bool
         :return:
         """
         publisher = self.connect()
@@ -181,7 +183,8 @@ class Client:
 
         publisher.publish(
             topic,
-            payload= json.dumps(message)
+            payload= json.dumps(message),
+            retain=retain
         )
 
         publisher.loop_stop()

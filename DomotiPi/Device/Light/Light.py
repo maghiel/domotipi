@@ -122,3 +122,9 @@ class Light(Abstract):
 
     def setService(self, service: IsDeviceServiceInterface):
         return super().setService(service)
+
+    def on(self):
+        pass
+
+    def off(self):
+        pass

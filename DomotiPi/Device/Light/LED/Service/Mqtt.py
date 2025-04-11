@@ -7,6 +7,7 @@ from DomotiPi.Device.IsDeviceServiceInterface import IsDeviceServiceInterface
 from DomotiPi.Device.Light.LED.RGBLED import RGBLED
 
 from DomotiPi.mqtt.Client import Client
+from DomotiPi.mqtt.State import State as MqttState
 
 from DomotiPi.Config import Config
 
@@ -17,9 +18,9 @@ class Mqtt(IsDeviceServiceInterface):
 
     Mqtt service layer for LED.
 
-    TODO: Save states on disconnect/remember states
-
     client      DomotiPi.mqtt.Client    MQTT client
+    mqttState   DomotiPi.mqtt.State     MQTT State instance
+    device      DomotiPi.DeviceAbstract Device instance
     objectId    string                  Unique object ID based on name and ID of parent
     topic       dict                    Topic dictionary to be defined in constructor
     """
@@ -27,6 +28,7 @@ class Mqtt(IsDeviceServiceInterface):
     NS_DEVICE = "domotipi"
 
     _client: Client
+    _mqttState: MqttState
     _device: RGBLED
 
     objectId: str
@@ -36,13 +38,14 @@ class Mqtt(IsDeviceServiceInterface):
     def __init__(self, topicPrefix=""):
         """
         Constructor
-        Instantiate MQTT client and set topicPrefix.
+        Instantiate MQTT client and State instance and set topicPrefix.
         Additionally, factory should be called by the parent device.
 
         :param topicPrefix:
         :type topicPrefix:  str
         """
         self.setClient(Client())
+        self._setMqttState(MqttState())
 
         if not topicPrefix:
             cfg = Config().getValue("mqtt")
@@ -114,7 +117,6 @@ class Mqtt(IsDeviceServiceInterface):
             True
         )
 
-
     def getClient(self) -> Client:
         """
         Return MQTT client
@@ -135,6 +137,26 @@ class Mqtt(IsDeviceServiceInterface):
         :rtype:         self
         """
         self._client = client
+        return self
+
+    def _getMqttState(self) -> MqttState:
+        """
+        Get MQTT State instance
+
+        :return:
+        :rtype: DomotiPi.mqtt.State
+        """
+        return self._mqttState
+
+    def _setMqttState(self, mqttState: MqttState):
+        """
+        Set MQTT State instance
+
+        :param mqttState:
+        :type mqttState: DomotiPi.mqtt.State
+        :return:
+        """
+        self._mqttState = mqttState
         return self
 
     def getDevice(self) -> RGBLED:
@@ -220,20 +242,19 @@ class Mqtt(IsDeviceServiceInterface):
                 "blink",
                 "pulse",
             ),
+            "retain": True,
             #'color_mode' : 'rgb',              # Deprecated!
             #'color_temp': 0,                   # probably not needed
         }
 
         self.getClient().configure(configTopic, payload)
 
-        ledState = self.getDevice().isLit()
+        mqttState = self._getMqttState()
+        mqttState.setState("OFF" if self.getDevice().isLit() == False else "ON")
 
         self.getClient().publishSingle(
             self.topic["state"],
-            {
-                "state": "OFF" if ledState == False else "ON",
-                "brightness" : 255
-            }
+            mqttState.getAsDict()
         )
 
     def command(self, state: dict):
@@ -254,25 +275,49 @@ class Mqtt(IsDeviceServiceInterface):
                 case "ON":
                     if not self.getDevice().isLit():
                         # Turn on LEDs and publish ON state
-                        self.getDevice().on()
-                        self.getClient().publishSingle(
-                            self.topic["state"],
-                            {"state": "ON"}
-                        )
+                        if self._getMqttState().getColor() is not None:
+                            self.color(self._getMqttState().getColor())
+                        else:
+                            self.getDevice().on()
+
+                        # Call other Light properties in order to recover state before OFF
+                        # but not after a disconnect as it would destroy the retained messages.
+                        if self._getMqttState().getState() is not None:
+                            self.commandLight(self._getMqttState().getAsDict())
+
+                        self._getMqttState().setState("ON")
                 case "OFF":
                     if self.getDevice().isLit():
-                        # Turn off LEDs and publish OFF state
+                        # Turn off LEDs, set OFF state and clear all effects
                         self.getDevice().off()
-                        self.getClient().publishSingle(
-                            self.topic['state'],
-                            {"state": "OFF"}
-                        )
+                        self._getMqttState().setState("OFF")
+                        self._getMqttState().setEffect(None)
                 case _:
                     self.getDevice().off()
                     raise InvalidMQTTStateError(
                         f"State must be either ON or OFF, received {state.get('state')}"
                     )
 
+        # Call commandLight for other states
+        self.commandLight(state)
+
+        # Publish the state back to the broker
+        self.getClient().publishSingle(
+            self.topic['state'],
+            self._getMqttState().getAsDict(),
+            True
+        )
+
+        return True
+
+    def commandLight(self, state: dict):
+        """
+        Command Light with color, brightness or effect
+
+        :param state:   Payload with possible effects
+        :type state:    dict
+        :return:
+        """
         # Color state, call parent with given rgb-255
         if "color" in state.keys():
             self.color(state.get("color"))
@@ -284,8 +329,6 @@ class Mqtt(IsDeviceServiceInterface):
         # It's disco time
         if "effect" in state.keys():
             self.effect(state.get("effect"))
-
-        return True
 
     def getState(self) -> bool:
         """
@@ -309,7 +352,9 @@ class Mqtt(IsDeviceServiceInterface):
         """
         if payload > 255 or payload < 0:
             raise LightValueError(f"Brightness expected 0-255, {payload} received instead.")
+
         self.getDevice().setBrightness(payload)
+        self._getMqttState().setBrightness(payload)
 
         return True
 
@@ -327,11 +372,15 @@ class Mqtt(IsDeviceServiceInterface):
         if (('r', 'g', 'b') - colorPayload.keys()).difference():
             raise LightValueError("Invalid colorPayload, should be {r,g,b}.")
 
+        # Set colors on physical device
         self.getDevice().setColor(
             colorPayload.get("r"),
             colorPayload.get("g"),
             colorPayload.get("b")
         )
+
+        # Set colors in the state instance
+        self._getMqttState().setColor(colorPayload)
 
         return True
 
@@ -353,5 +402,7 @@ class Mqtt(IsDeviceServiceInterface):
                 self.getDevice().pulse()
             case _:
                 raise LightCommandError(f"Effect {effect} not supported by device.")
+
+        self._getMqttState().setEffect(effect)
 
         return True
