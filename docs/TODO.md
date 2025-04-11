@@ -37,7 +37,7 @@
     * ~~Implement (misuse) IsDeviceService interface (abstract in python)~~
     * Implement Controllers
     * ~~Implement extra fields in mqtt~~
-    * Implement active_high and pwm properties
+    * ~~Implement active_high and pwm properties~~
 
 * Error handling
   * ~~Implement custom Exception classes~~
