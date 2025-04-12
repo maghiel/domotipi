@@ -9,6 +9,7 @@ class State:
 
     TODO: Quick&dirty
     """
+
     _state: str = None
     _brightness: int = None
     _color: dict = None

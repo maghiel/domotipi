@@ -16,6 +16,7 @@ sys.path.insert(0, str(scriptPath.parent) + "/")    # Append trailing slash for 
 
 from DomotiPi.Config import Config
 
+
 def setPiGPIOEnv():
     cfg = Config()
     pinFactory = cfg.getValue("pin_factory")

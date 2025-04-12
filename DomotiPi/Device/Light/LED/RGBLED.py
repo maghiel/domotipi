@@ -65,7 +65,9 @@ class RGBLED(Light):
         NOTE: gpiozero uses GPIO pin-numbers instead of physical pin-numbers            
         """
         if (("red", "green", "blue") - pins.keys()).difference():
-            raise LightValueError(f'Invalid keys given for rgb pins. Expected red,green,blue, got {pins.keys()}')
+            raise LightValueError(
+                f"Invalid keys given for rgb pins. Expected red,green,blue, got {pins.keys()}"
+            )
 
         self.__pinRed = pins.get("red")
         self.__pinGreen = pins.get("green")
@@ -82,7 +84,7 @@ class RGBLED(Light):
             self.__pinGreen,
             self.__pinBlue,
             active_high=activeHigh,
-            pwm=pwm
+            pwm=pwm,
         )
 
         # Store current color values

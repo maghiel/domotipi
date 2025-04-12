@@ -11,6 +11,7 @@ class Mapper:
 
     Map Device from Config
     """
+
     _config: Config
 
     def __init__(self):
@@ -55,7 +56,9 @@ class Mapper:
         device = self._getRaw(deviceId)
 
         if not device:
-            raise DeviceNotFoundError(f'No device has been configured with id: {deviceId}')
+            raise DeviceNotFoundError(
+                f"No device has been configured with id: {deviceId}"
+            )
 
         return self._populate(device)
 
@@ -69,7 +72,7 @@ class Mapper:
         :rtype:             dict | None
         """
         cfg = self._getConfig()
-        devices = dict(cfg.getValue('devices'))
+        devices = dict(cfg.getValue("devices"))
 
         device = devices.get(deviceId)
 
@@ -83,7 +86,7 @@ class Mapper:
         :return:
         :rtype: dict
         """
-        defaults = self._getRaw('default')
+        defaults = self._getRaw("default")
 
         if not defaults:
             raise DeviceNotFoundError("Default device configuration not found!")

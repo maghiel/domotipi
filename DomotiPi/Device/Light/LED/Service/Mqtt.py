@@ -351,7 +351,9 @@ class Mqtt(IsDeviceServiceInterface):
         :raises:            LightValueError
         """
         if payload > 255 or payload < 0:
-            raise LightValueError(f"Brightness expected 0-255, {payload} received instead.")
+            raise LightValueError(
+                f"Brightness expected 0-255, {payload} received instead."
+            )
 
         self.getDevice().setBrightness(payload)
         self._getMqttState().setBrightness(payload)
@@ -369,7 +371,7 @@ class Mqtt(IsDeviceServiceInterface):
         :rtype:                 bool
         :raises:                LightValueError
         """
-        if (('r', 'g', 'b') - colorPayload.keys()).difference():
+        if (("r", "g", "b") - colorPayload.keys()).difference():
             raise LightValueError("Invalid colorPayload, should be {r,g,b}.")
 
         # Set colors on physical device

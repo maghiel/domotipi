@@ -7,4 +7,5 @@ class DeviceTypeError(DomotiPiError):
     Thrown when a Device instance is not of the expected type.
 
     """
+
     pass

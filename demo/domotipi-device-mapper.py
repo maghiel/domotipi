@@ -2,6 +2,7 @@
 DomotiPi Device.Mapper demo/test script
 
 """
+
 import demo_init
 from DomotiPi.Device.Mapper import Mapper
 

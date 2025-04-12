@@ -7,4 +7,5 @@ class InvalidMQTTStateError(DomotiPiError):
     Raised when a received MQTT state message is unknown or invalid.
 
     """
+
     pass

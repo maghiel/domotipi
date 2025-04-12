@@ -21,7 +21,7 @@ class Abstract(ABC):
     _hardwareVersion: str
     _softwareVersion: str
     _supportURL: str
-    _suggestedArea : str
+    _suggestedArea: str
 
     _service: IsDeviceServiceInterface | None
 
@@ -211,7 +211,7 @@ class Abstract(ABC):
         :rtype: str
         """
         if url != "" and not validators.url(url):
-            raise ValueError(f'Invalid URL: {url}')
+            raise ValueError(f"Invalid URL: {url}")
 
         self._supportURL = url
         return self.getSupportURL()
