@@ -1,4 +1,5 @@
 from paho.mqtt.client import Client as mqttClient
+from paho.mqtt.subscribeoptions import SubscribeOptions
 
 import json
 
@@ -107,7 +108,7 @@ class Client:
 
         return True
 
-    def listen(self, topic: str, ctlType: str, ctlObject, loop: bool):
+    def listen(self, topic: dict, ctlType: str, ctlObject, loop: bool):
         """
         Listen/subscribe to given topic.
 
@@ -115,8 +116,8 @@ class Client:
 
         TODO: refactor to subscribe
 
-        :param topic:       Topic to listen/subscribe too
-        :type topic:        str
+        :param topic:       Topics to listen/subscribe too
+        :type topic:        dict
         :param ctlType:     Control type; either "command" or "state"
         :type ctlType:      str
         :param ctlObject:   Object instance to call method on
@@ -136,8 +137,25 @@ class Client:
             :param message:         Mqtt message
             :raises:                NotImplementedError
             """
+            # Declare outer-scope variables
+            nonlocal msgPrevious
+            nonlocal getRetained
+            nonlocal client
+
             # Decode mqtt payload to str and convert to dict
             msgdec = json.loads(message.payload.decode("utf-8"))
+
+            # Unsubscribe from the state topic after a first success.
+            # This will prevent continuous processing of a load of retained messages,
+            # but will make sure the retained state is recovered after a disconnect.
+            if msgPrevious is None:
+                if msgdec:
+                    msgPrevious = msgdec
+                    getRetained = False
+                    client.unsubscribe(topic["state"])
+            elif msgdec == msgPrevious:
+                client.unsubscribe(topic["state"])
+                return
 
             match ctlType:
                 # Forward payload to ctlObject.command()
@@ -151,10 +169,16 @@ class Client:
                         "State topics other than command and state not implemented yet."
                     )
 
-        client = self.getClient()
+        msgPrevious = None
+        getRetained = True
 
+        client = self.getClient()
         client.on_message = onMessage
-        client.subscribe(topic)
+        # Only subscribe to the state topic to fetch retained messages after a disconnect or power off
+        if getRetained:
+            client.subscribe(topic["state"], options=SubscribeOptions(retainHandling=1))
+
+        client.subscribe(topic["command"])
 
         if True == loop:
             client.loop_forever()
