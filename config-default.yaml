@@ -80,4 +80,4 @@ devices:
         green: 27   # Board 13
         blue: 22    # Board 15
 #      active_high: false   # active_high is set to false by default
-#      pwm : true           # pwm is set to true by default and necessary for brightness
+#      pwm: true           # pwm is set to true by default and necessary for brightness
