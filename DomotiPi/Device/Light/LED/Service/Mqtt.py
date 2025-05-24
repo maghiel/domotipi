@@ -111,7 +111,7 @@ class Mqtt(IsDeviceServiceInterface):
 
         # Subscribe to command topic. State will be called once per state-change.
         self.getClient().listen(
-            self.topic["command"],
+            self.topic,
             "command",
             self,
             True
@@ -252,10 +252,10 @@ class Mqtt(IsDeviceServiceInterface):
         mqttState = self._getMqttState()
         mqttState.setState("OFF" if self.getDevice().isLit() == False else "ON")
 
-        self.getClient().publishSingle(
-            self.topic["state"],
-            mqttState.getAsDict()
-        )
+        # self.getClient().publishSingle(
+        #     self.topic["state"],
+        #     mqttState.getAsDict()
+        # )
 
     def command(self, state: dict):
         """
@@ -275,14 +275,12 @@ class Mqtt(IsDeviceServiceInterface):
                 case "ON":
                     if not self.getDevice().isLit():
                         # Turn on LEDs and publish ON state
-                        if self._getMqttState().getColor() is not None:
-                            self.color(self._getMqttState().getColor())
-                        else:
+                        if self._getMqttState().getColor() is None:
                             self.getDevice().on()
 
                         # Call other Light properties in order to recover state before OFF
                         # but not after a disconnect as it would destroy the retained messages.
-                        if self._getMqttState().getState() is not None:
+                        if self._getMqttState().getAsDict():
                             self.commandLight(self._getMqttState().getAsDict())
 
                         self._getMqttState().setState("ON")

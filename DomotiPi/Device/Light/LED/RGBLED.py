@@ -72,18 +72,20 @@ class RGBLED(Light):
         self.__pinRed = pins.get("red")
         self.__pinGreen = pins.get("green")
         self.__pinBlue = pins.get("blue")
-
         """
         Init LED classes
         
         I'm not completely sure, but setting LOW on GPIO pins makes them ground?
         It works for now, would it blow up? This also means that active_high should be set to False.
+        
+        GPIOZERO's PWM construction currently causes a flicker on startup. 
         """
         self.__RGBLED = RGBLEDIO(
             self.__pinRed,
             self.__pinGreen,
             self.__pinBlue,
             active_high=activeHigh,
+            initial_value=(0, 0, 0),
             pwm=pwm,
         )
 
