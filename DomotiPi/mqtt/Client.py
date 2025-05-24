@@ -126,7 +126,6 @@ class Client:
         :type loop:         bool
         :return:
         """
-
         def onMessage(clientInstance: mqttClient, userdata, message):
             """
             MQTT hook on receiving message/payload
