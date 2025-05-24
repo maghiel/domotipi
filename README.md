@@ -59,8 +59,8 @@ Alternatively just download the latest release.
 ```bash
 mkdir domotipi
 cd domotipi
-wget https://github.com/maghiel/domotipi/archive/refs/tags/v0.1.1.0.tar.gz
-tar -zxvf v0.1.1.0.tar.gz
+wget https://github.com/maghiel/domotipi/archive/refs/tags/v0.1.2.0.tar.gz
+tar -zxvf v0.1.2.0.tar.gz
 ```
 
 ## Setup
