@@ -38,9 +38,9 @@ or even using a mockup device. Please review `config.yaml` for instructions how 
 ## Download
 
 ### Using git
-The most flexible of downloading DomotiPi is using git, as it allows you to switch branches easily. No configuration
-will be lost if you use `config.yaml` instead of the default template as no other information is stored locally 
-(subject to change).
+The most flexible method of downloading DomotiPi is using git, as it allows you to switch branches easily.
+No configuration will be lost if you use `config.yaml` instead of the default template as no other information is
+stored locally (subject to change).
 
 #### HTTPS
 ```bash
@@ -59,8 +59,8 @@ Alternatively just download the latest release.
 ```bash
 mkdir domotipi
 cd domotipi
-wget https://github.com/maghiel/domotipi/archive/refs/tags/v0.1.0.0.tar.gz
-tar -zxvf v0.1.0.0.tar.gz
+wget https://github.com/maghiel/domotipi/archive/refs/tags/v0.1.1.0.tar.gz
+tar -zxvf v0.1.1.0.tar.gz
 ```
 
 ## Setup
