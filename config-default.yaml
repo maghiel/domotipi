@@ -57,8 +57,8 @@ devices:
   default:
     manufacturer: DomotiPi Devices GPLv3
     model: DomotiPi Device
-    hardware_version: 0.1.2.0  # Misuse DomotiPi version as hardware version
-    software_version: 0.1.2.0
+    hardware_version: 0.1.3.0  # Misuse DomotiPi version as hardware version
+    software_version: 0.1.3.0
     support_URL: https://github.com/maghiel/domotipi
     suggested_area: living_room
   1:
