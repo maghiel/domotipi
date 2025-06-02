@@ -13,7 +13,6 @@ class Client:
 
     Instead of extending mqtt classes new instances are made.
     """
-
     _config: dict
     _client: mqttClient
 
@@ -94,16 +93,25 @@ class Client:
 
         return client
 
-    def configure(self, topic: str, payload: dict):
+    def configure(self, topic: str, payload: dict, availTopic: str):
         """
-        Configure mqtt discovery at given topic with given payload
+        Configure mqtt discovery at given topic with given payload.
+        Also set on_disconnect to allow updating the availability topic.
 
         :param topic:       Topic for discovery/configuration
         :type topic:        str
         :param payload:     Configuration payload
         :type payload:      dict
+        :param availTopic:  Availability topic to publish to.
+        :type availTopic:   str
         :return:            bool
         """
+        def onDisconnect(client, userdata, rc):
+            nonlocal availTopic
+            self.publishSingle(availTopic, "offline")
+
+        self.getClient().on_disconnect = onDisconnect
+
         self.getClient().publish(topic, json.dumps(payload))
 
         return True
@@ -173,6 +181,7 @@ class Client:
 
         client = self.getClient()
         client.on_message = onMessage
+
         # Only subscribe to the state topic to fetch retained messages after a disconnect or power off
         if getRetained:
             client.subscribe(topic["state"], options=SubscribeOptions(retainHandling=1))
@@ -184,7 +193,7 @@ class Client:
 
         pass
 
-    def publishSingle(self, topic: str, message: dict, retain: bool = False):
+    def publishSingle(self, topic: str, message: dict | str, retain: bool = False):
         """
         Publish a single message to the MQTT broker.
 
@@ -196,7 +205,7 @@ class Client:
         :param topic:       Topic to publish message to
         :type topic:        str
         :param message:     Message to publish
-        :type message:      dict
+        :type message:      dict | str
         :param retain:      Retain message. Defaults to false
         :type retain:       bool
         :return:
@@ -204,9 +213,16 @@ class Client:
         publisher = self.connect()
         publisher.loop_start()
 
+        # Encode message in all cases besides a single string.
+        # Not encoding single strings ensures properly sending availability payloads, where the payload
+        # should be plain online/offline instead of being wrapped in quotes.
+        # TODO: yes, I am aware this is a hack
+        if not type(message) is str:
+            message = json.dumps(message)
+
         publisher.publish(
             topic,
-            payload= json.dumps(message),
+            payload=message,
             retain=retain
         )
 

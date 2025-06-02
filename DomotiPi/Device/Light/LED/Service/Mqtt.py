@@ -91,6 +91,8 @@ class Mqtt(IsDeviceServiceInterface):
             "command": f"{prefix}/{self.objectId}/set",
             # State topic
             "state": f"{prefix}/{self.objectId}/state",
+            # Availability topic
+            "availability": f"{prefix}/{self.objectId}/status",
         }
 
         return self
@@ -107,7 +109,7 @@ class Mqtt(IsDeviceServiceInterface):
                 "Device not set. Was factory called before attempting to use the service?"
             )
 
-        self.configure(self.topic["home"], self.topic["discover"])
+        self.configure(self.topic["home"], self.topic["discover"], self.topic["availability"])
 
         # Subscribe to command topic. State will be called once per state-change.
         self.getClient().listen(
@@ -200,17 +202,20 @@ class Mqtt(IsDeviceServiceInterface):
         """
         self._topicPrefix = prefix
 
-    def configure(self, topic: str, configTopic: str) -> None:
+    def configure(self, topic: str, configTopic: str, availTopic: str) -> None:
         """
         Configure MQTT client for discovery
 
         TODO: hardcoded device properties should be configurable
         TODO: differentiate device registry, origin, etc.
+        TODO: refactor hardcoded topics
 
         :param topic:           Home/base topic to subscribe/announce too
         :type topic:            str
         :param configTopic:     Configuration/discovery topic
         :type configTopic:      str
+        :param availTopic:      Availability topic
+        :type availTopic:       str
         :return:                None
         """
         payload = {
@@ -219,6 +224,12 @@ class Mqtt(IsDeviceServiceInterface):
             "cmd_t": "~/set",
             "stat_t": "~/state",
             "schema": "json",
+            # Availability
+            "availability": {
+                "topic": "~/status",
+                "payload_available": "online",
+                "payload_not_available": "offline"
+            },
             # Device properties
             "manufacturer": self.getDevice().getManufacturer(),
             "model": self.getDevice().getModel(),
@@ -247,7 +258,15 @@ class Mqtt(IsDeviceServiceInterface):
             #'color_temp': 0,                   # probably not needed
         }
 
-        self.getClient().configure(configTopic, payload)
+        # Publish online status
+        self.getClient().publishSingle(
+            availTopic,
+            'online',
+            True
+        )
+
+        # Configure the mqtt device
+        self.getClient().configure(configTopic, payload, availTopic)
 
         mqttState = self._getMqttState()
         mqttState.setState("OFF" if self.getDevice().isLit() == False else "ON")
